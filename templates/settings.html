@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - {{ current_settings.get('butler_name', 'Hydrus Automate') }}</title>
+    <link rel="stylesheet" id="main-stylesheet" href="{{ url_for('static', filename='css/' + current_settings.get('theme', 'default') + '.css') }}">
+    {% if current_settings.get('background_image') and current_settings.get('background_image') != 'default' %}
+    <style>
+        body {
+            background-image: url("{{ url_for('static', filename='images/backgrounds/' + current_settings.get('background_image')) }}");
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+    </style>
+    {% endif %}
+</head>
+<body>
+    <header>
+        <h1>Settings - {{ current_settings.get('butler_name', 'Hydrus Automate') }}</h1>
+        <nav>
+            <a href="{{ url_for('views.index') }}">
+                <button>Back to Main</button>
+            </a>
+        </nav>
+    </header>
+
+    <main class="settings-layout">
+        <aside class="side-menu">
+            <div class="side-menu-header">
+                <h3>Settings Sections</h3>
+            </div>
+            <nav class="side-menu-nav">
+                <a href="#hydrus-api-settings" class="side-menu-item">
+                    <span class="menu-icon">🔗</span>
+                    <span class="menu-text">API Details</span>
+                </a>
+                <a href="#automation-settings" class="side-menu-item">
+                    <span class="menu-icon">⚙️</span>
+                    <span class="menu-text">Automation</span>
+                </a>
+                <a href="#personalization-settings" class="side-menu-item">
+                    <span class="menu-icon">🎨</span>
+                    <span class="menu-text">Personalization</span>
+                </a>
+                <a href="#advanced-settings-section" class="side-menu-item">
+                    <span class="menu-icon">⚠</span>
+                    <span class="menu-text">Advanced</span>
+                </a>
+            </nav>
+        </aside>
+
+        <div class="settings-content">
+            <form id="settings-form" method="post" action="{{ url_for('views.handle_save_settings') }}">
+                
+                <!-- MODIFIED: Header and Button are now in a flex container -->
+                <div class="settings-header">
+                    <div class="settings-header-text">
+                    </div>
+                    <button type="submit" class="save-settings-button">Save All Settings</button>
+                </div>
+                
+                <!-- Settings panels remain the same -->
+                <section id="hydrus-api-settings" class="settings-panel">
+                    <h3>Hydrus Client API Details</h3>
+                    <div class="setting-row">
+                        <label for="api-address">Hydrus API URL:</label>
+                        <input type="text" id="api-address" name="hydrus_api_url" value="{{ current_settings.get('hydrus_api_url', 'http://localhost:45869') }}" required>
+                    </div>
+                    <div class="setting-row">
+                        <label for="api-key">API key:</label>
+                        <input type="text" id="api-key" name="hydrus_api_key" value="" autocomplete="new-password">
+                        <p class="setting-description"><small>Leave blank to keep the existing key.</small></p>
+                    </div>
+                    <div class="setting-row">
+                         <h4>Required API Permissions:</h4>
+                         <div class="note">
+                             <p>To use all features of this application, the API key needs the following permissions from your Hydrus client:</p>
+                             <ul>
+                                <li><b>Edit File Ratings</b></li>
+                                <li><b>Edit File Tags</b></li>
+                                <li><b>Import and Delete Files</b></li>
+                                <li><b>Search for and Fetch Files</b></li>
+                             </ul>
+                             <p class="setting-description"><small>When setting your API key's permissions in Hydrus, ensure these are selected, or grant "permits everything".</small></p>
+                             <hr style="margin-top: 15px; margin-bottom: 15px; border: 0; border-top: 1px solid var(--border-color, #4a627a);">
+                             <p><strong>Important:</strong> For this web application to communicate correctly with the Hydrus API from your browser (especially for fetching service lists on the Rules page), you must enable "support CORS headers" in your Hydrus Client settings. This is usually found under <code>services</code> → <code>manage services</code> → <code>client API</code>.</p>
+                         </div>
+                     </div>
+                </section>
+                
+                <section id="automation-settings" class="settings-panel">
+                     <h3 class="panel-subtitle">Automation Parameters</h3>
+                     <div class="automation-layout-container">
+                        <div class="automation-column-left">
+                            <div class="setting-row">
+                                <label for="rule-interval-seconds">Rule Execution Interval (seconds):</label>
+                                <input type="number" id="rule-interval-seconds" name="rule_interval_seconds" value="{{ current_settings.get('rule_interval_seconds', 0) }}" min="0" step="1" required>
+                                <p class="setting-description"><small>Set to 0 to disable automatic rule execution. Rules can still be run manually.</small></p>
+                            </div>
+            
+                            <div class="setting-row">
+                                <label for="last-viewed-threshold-seconds">Exclude Recently Viewed Files (seconds):</label>
+                                <input type="number" id="last-viewed-threshold-seconds" name="last_viewed_threshold_seconds" value="{{ current_settings.get('last_viewed_threshold_seconds', 0) }}" min="0" step="1" required>
+                                <p class="setting-description"><small>Files viewed within this many seconds will be excluded from rule searches. This helps prevent moving files you may currently be viewing or interacting with. Set to 0 to disable this filter.</small></p>
+                            </div>
+                        </div>
+    
+                        <div class="automation-column-right">
+                            <h4 style="margin-bottom: 1.5em;">Manual Run Behavior</h4>
+                            <div class="checkbox-setting-item">
+                                <input type="checkbox" id="show-run-notifications" name="show_run_notifications" {% if current_settings.get('show_run_notifications', True) %}checked{% endif %}>
+                                <label for="show-run-notifications">
+                                    <span class="checkbox-main-label">Show <strong>pre-run options</strong> dialog for single rules.</span>
+                                    <span class="checkbox-sub-label">Disabling this skips the dialog for setting 'Deep Run' or 'Bypass Overrides' per run.</span>
+                                </label>
+                            </div>
+                            <div class="checkbox-setting-item">
+                                <input type="checkbox" id="show-run-summary-notifications" name="show_run_summary_notifications" {% if current_settings.get('show_run_summary_notifications', True) %}checked{% endif %}>
+                                <label for="show-run-summary-notifications">
+                                    <span class="checkbox-main-label">Show <strong>post-run summary</strong> dialog for single rules.</span>
+                                    <span class="checkbox-sub-label">Disabling this skips the summary report after a rule has finished running.</span>
+                                </label>
+                            </div>
+                            <div class="checkbox-setting-item">
+                                <input type="checkbox" id="show-run-all-notifications" name="show_run_all_notifications" {% if current_settings.get('show_run_all_notifications', True) %}checked{% endif %}>
+                                <label for="show-run-all-notifications">
+                                    <span class="checkbox-main-label">Show <strong>pre-run options</strong> dialog for 'Run All'.</span>
+                                    <span class="checkbox-sub-label">Disabling this skips the pre-run confirmation dialog for all rules.</span>
+                                </label>
+                            </div>
+                            <div class="checkbox-setting-item">
+                                <input type="checkbox" id="show-run-all-summary-notifications" name="show_run_all_summary_notifications" {% if current_settings.get('show_run_all_summary_notifications', True) %}checked{% endif %}>
+                                <label for="show-run-all-summary-notifications">
+                                    <span class="checkbox-main-label">Show <strong>post-run summary</strong> dialog for 'Run All'.</span>
+                                    <span class="checkbox-sub-label">Disabling this skips the summary report after all rules have finished running.</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <section id="personalization-settings" class="settings-panel">
+                <h3>Personalization</h3>
+                <div class="setting-row">
+                    <label for="butler-name">Rename your Automate:</label>
+                    <input type="text" id="butler-name" name="butler_name" value="{{ current_settings.get('butler_name', 'Hydrus Butler') }}" required>
+                </div>
+                <div class="setting-row">
+                    <label for="theme-select">Application Theme:</label>
+                    <select id="theme-select" name="theme">
+                        {% for theme_name in current_settings.get('available_themes', ['default']) %}
+                            <option value="{{ theme_name }}" {% if current_settings.get('theme') == theme_name %}selected{% endif %}>
+                                {{ theme_name|capitalize }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    <p class="setting-description"><small>Select the visual theme for the application. New themes can be added by placing .css files in the <code>static/css</code> directory.</small></p>
+                </div>
+                <div class="setting-row">
+                    <label for="background-image-select">Application Background:</label>
+                    <select id="background-image-select" name="background_image">
+                        <option value="default" {% if not current_settings.get('background_image') or current_settings.get('background_image') == 'default' %}selected{% endif %}>
+                            Default (Theme Color)
+                        </option>
+                        {% for image_file in available_backgrounds %}
+                            <option value="{{ image_file }}" {% if current_settings.get('background_image') == image_file %}selected{% endif %}>
+                                {{ image_file.split('.')[0]|replace('_', ' ')|title }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    <p class="setting-description"><small>Select a background image. Images are sourced from the <code>static/images/backgrounds</code> directory.</small></p>
+                </div>
+            </section>
+                
+                <section id="advanced-settings-section" class="settings-panel">
+                    <h3>Advanced Settings</h3>
+                    <div class="note">
+                        <p><strong>Warning:</strong> These are advanced settings. Making changes may increase storage needs.</p>
+                    </div>
+                    
+                    <div class="setting-row toggle-switch-container">
+                        <label for="enable-log-pruning-toggle" class="toggle-switch-label">Log Pruning:</label>
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="enable-log-pruning-toggle" name="enable_log_pruning" {% if current_settings.get('enable_log_pruning', True) %}checked{% endif %}>
+                            <label for="enable-log-pruning-toggle" class="slider"></label>
+                        </div>
+                        <button type="button" id="manual-prune-button" class="manual-action-button">Prune Logs Now</button>
+                        <p class="setting-description">
+                            <small>
+                                <strong>Automatically Prune Logs.</strong> Periodically clean the logs database by removing excessive duplicate entries. This helps manage database size over time. (Default: Enabled)
+                            </small>
+                        </p>
+                    </div>
+                </section>
+    
+                <button type="submit" class="save-settings-button" style="margin-top: 1.5em;">Save All Settings</button>
+            </form>
+            
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div id="flashes-container">
+                        {% for category, message in messages %}
+                            <div class="flash-message flash-{{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+    
+            <div id="status-message" class="status-message" style="display: none;"></div>
+        </div>
+    </main>
+
+    <footer>
+        <p>Kept in order by {{ current_settings.get('butler_name', 'Hydrus Butler') }} © <span id="current-year">2024</span></p>
+    </footer>
+    <script>
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+    </script>
+    <script type="module" src="{{ url_for('static', filename='js/settings.js') }}"></script>
+</body>
+</html>

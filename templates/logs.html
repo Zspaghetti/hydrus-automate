@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activity Logs - {{ current_settings.get('butler_name', 'Hydrus Butler') }}</title>
+    <link id="main-stylesheet" rel="stylesheet" href="{{ url_for('static', filename='css/' + current_settings.get('theme', 'default') + '.css') }}">
+    <script src="{{ url_for('static', filename='/static/fonts/vendor/chart.js') }}"></script>
+    {% if current_settings.get('background_image') and current_settings.get('background_image') != 'default' %}
+    <style>
+        body {
+            background-image: url("{{ url_for('static', filename='images/backgrounds/' + current_settings.get('background_image')) }}");
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+    </style>
+    {% endif %}
+</head>
+<body>
+    <header>
+        <h1 id="butler-name-header">{{ current_settings.get('butler_name', 'Hydrus Butler') }}</h1>
+        <nav>
+            <a href="{{ url_for('views.index') }}"><button>Back to Rules</button></a>
+            <a href="{{ url_for('views.settings_page') }}"><button>Settings</button></a>
+        </nav>
+    </header>
+
+    <main>
+        <div class="top-container">
+            <!-- Part 1: Specific Information Lookup -->
+            <section id="lookup-section">
+                <h2>Information Lookup</h2>
+                <div class="lookup-controls">
+                    <select id="lookup-type">
+                        <option value="file_hash">File Hash</option>
+                        <option value="rule_id">Rule ID</option>
+                    </select>
+                    <input type="text" id="lookup-query" placeholder="Enter File Hash or Rule ID...">
+                    <button id="lookup-button">Lookup</button>
+                </div>
+                <div id="lookup-loading-message" class="loading-message" style="display: none;">Looking up info...</div>
+                <div id="lookup-error-message" class="error-message" style="display: none;"></div>
+                <div id="lookup-results-container" class="lookup-results">
+                    <!-- JS will render results here -->
+                </div>
+            </section>
+
+            <!-- Part 2: Chart Statistics -->
+            <section id="log-statistics-section">
+                <h2>Rule Success Statistics</h2>
+                <div class="filters-container">
+                    <label for="stats-time-frame">Time Frame:</label>
+                    <select id="stats-time-frame">
+                        <option value="24h">Last 24 Hours</option>
+                        <option value="3d">Last 3 Days</option>
+                        <option value="1w" selected>Last 1 Week</option>
+                        <option value="1m">Last 1 Month</option>
+                        <option value="all">All Time</option>
+                        <option value="custom">Custom Range</option>
+                    </select>
+                    <div id="stats-custom-date-range" class="custom-date-range" style="display:none;">
+                        <input type="date" id="stats-start-date" title="Start Date">
+                        <input type="date" id="stats-end-date" title="End Date">
+                    </div>
+                    <button id="update-stats-chart-button" class="secondary-button">Update</button>
+                </div>
+                <div id="stats-loading-message" class="loading-message" style="display: none;">Loading statistics...</div>
+                <div id="stats-error-message" class="error-message" style="display: none;"></div>
+                <div class="chart-container">
+                    <canvas id="filesProcessedChart"></canvas>
+                </div>
+            </section>
+        </div>
+
+        <hr>
+
+        <!-- Part 3: Searchable Logs -->
+        <section id="detailed-logs-section">
+            <h2>Recent Rule Executions</h2>
+            <form id="log-search-form">
+                <div class="log-search-grid">
+                    <!-- Each input is kept as it's handled by the new JS -->
+                    <div><label for="search-file-hash">File Hash:</label><input type="text" id="search-file-hash" placeholder="Filter by file hash..."></div>
+                    <div>
+                        <div><label for="search-rule-id">Rule Name or ID:</label><input type="text" id="search-rule-id" placeholder="Filter by Rule Name or UUID..."></div>
+                    </div>
+                    <div><label for="search-run-id">Run ID:</label><input type="text" id="search-run-id" placeholder="Filter by run UUID..."></div>
+                    <div><label for="search-rule-execution-id">Execution ID:</label><input type="text" id="search-rule-execution-id" placeholder="Filter by execution UUID..."></div>
+                    <div><label for="search-status-filter">Status:</label><input type="text" id="search-status-filter" placeholder="e.g., success, failure (comma-sep)"></div>
+                    <div>
+                        <label for="search-sort-by">Sort By:</label>
+                        <select id="search-sort-by">
+                            <option value="timestamp_desc" selected>Timestamp (Newest First)</option>
+                            <option value="timestamp_asc">Timestamp (Oldest First)</option>
+                            <option value="rule_name_asc">Rule Name (A-Z)</option>
+                            <option value="rule_name_desc">Rule Name (Z-A)</option>
+                            <option value="status_asc">Status (A-Z)</option>
+                            <option value="status_desc">Status (Z-A)</option>
+                        </select>
+                    </div>
+                    <div class="time-filter-group">
+                        <label for="search-time-frame">Time Frame:</label>
+                        <select id="search-time-frame">
+                            <option value="1w" selected>Last Week</option>
+                            <option value="24h">Last 24 Hours</option>
+                            <option value="1m">Last Month</option>
+                            <option value="all">All Time</option>
+                            <option value="custom">Custom</option>
+                        </select>
+                    </div>
+                     <div id="search-custom-date-range" class="custom-date-range time-filter-group" style="display:none;">
+                        <input type="date" id="search-start-date" title="Start Date">
+                        <input type="date" id="search-end-date" title="End Date">
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="submit">Search</button>
+                    <button type="button" id="reset-search-logs-button" class="secondary-button">Reset</button>
+                </div>
+            </form>
+
+            <div id="logs-loading-message" class="loading-message" style="display: none;">Loading logs...</div>
+            <div id="logs-error-message" class="error-message" style="display: none;"></div>
+            <div id="detailed-logs-results-summary" class="results-summary"></div>
+
+            <div class="table-responsive">
+                <table id="detailed-logs-table">
+                    <thead>
+                        <tr>
+                            <th>Timestamp</th>
+                            <th>Rule Name</th>
+                            <th>File Counts</th>
+                            <th>Status</th>
+                            <th>Summary</th>
+                            <th>Run ID</th>
+                            <th>Execution ID</th>
+                        </tr>
+                    </thead>
+                    <tbody id="detailed-logs-table-body">
+                        <!-- Log entries will be populated here by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+            <div id="logs-pagination-controls" class="pagination-controls"></div>
+        </section>
+    </main>
+
+    <footer>
+        <p>Kept in order by {{ current_settings.get('butler_name', 'Hydrus Butler') }} © 2025</p>
+    </footer>
+
+    <script>
+        window.HYDRUS_BUTLER_SETTINGS = {
+            butler_name: "{{ current_settings.get('butler_name', 'Hydrus Butler') | e }}"
+        };
+    </script>
+    <script type="module" src="{{ url_for('static', filename='js/logs_page.js') }}"></script>
+</body>
+</html>

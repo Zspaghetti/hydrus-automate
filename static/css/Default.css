@@ -1,0 +1,1700 @@
+/*
+=====================================================================
+== modern_Defaultv2.css - Stylesheet for the "Modern Light" Theme ==
+=====================================================================
+This file defines the visual appearance for the light variant of the
+modern theme. It uses a bright, clean palette with frosted-glass
+effects and is structured to be easily maintainable.
+*/
+
+/* --- [SECTION] ROOT VARIABLES --- */
+/*
+  The entire theme is controlled by these CSS Custom Properties.
+  Changing these values will globally update the application's appearance.
+*/
+:root {
+    /* Color Palette - Light Theme */
+    --primary-light: #F8F9FA;      /* Clean, off-white main background */
+    --secondary-light: #E9ECEF;    /* Slightly darker grey for secondary elements/backgrounds */
+    --panel-light: #FFFFFF;        /* Base color for panels, cards, and modals */
+    --accent-blue: #0D6EFD;       /* Main interactive accent color (Bootstrap Blue) */
+    --accent-pink: #D63384;       /* Secondary accent for gradients (Bootstrap Pink) */
+    --accent-orange: #FD7E14;     /* Accent for notifications or specific info (Bootstrap Orange) */
+    --accent-green: #198754;      /* Success/Online status color (Bootstrap Green) */
+    --accent-red: #DC3545;        /* Error/Offline/Delete status color (Bootstrap Red) */
+    --text-dark: #212529;        /* Primary text color (near-black) */
+    --text-muted: #6C757D;        /* Secondary/less important text color */
+
+    /* Sizing and Effects */
+    --border-color: rgba(0, 0, 0, 0.125);       /* Subtle, dark border color */
+    --shadow-color: rgba(0, 0, 0, 0.1);         /* Soft shadow for depth */
+    --border-radius: 12px;                      /* Consistent border radius for panels */
+    --transition: all 0.3s ease;                /* Default transition for hover effects */
+}
+
+/* --- [SECTION] BASE STYLES --- */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+
+body {
+    background: radial-gradient(ellipse at top, var(--secondary-light), var(--primary-light));
+    color: var(--text-dark);
+    min-height: 100vh;
+    overflow-y: auto;
+    position: relative;
+}
+/* This applies the special layout ONLY to the body when it contains the main app. */
+body:has(.app-container) {
+    display: flex;
+    overflow: hidden; /* Lock scrolling only for the main app view */
+}
+
+/* Faint, decorative color splotches in the background to add atmosphere */
+body::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background:
+        radial-gradient(circle at 10% 20%, rgba(13, 110, 253, 0.07) 0%, transparent 25%),
+        radial-gradient(circle at 90% 80%, rgba(214, 51, 132, 0.07) 0%, transparent 25%);
+    z-index: -1;
+    opacity: 0.8;
+}
+
+/* Styles for the large, blurred decorative elements */
+.moonlight-decoration {
+    position: absolute;
+    z-index: 0;
+    border-radius: 50%;
+    filter: blur(90px);
+    opacity: 0.25;
+    pointer-events: none;
+}
+.decoration-1 { width: 300px; height: 300px; background: var(--accent-blue); top: -100px; right: -100px; }
+.decoration-2 { width: 200px; height: 200px; background: var(--accent-pink); bottom: -50px; left: -50px; }
+.decoration-3 { width: 150px; height: 150px; background: var(--accent-orange); top: 40%; left: 20%; }
+
+
+/* --- [SECTION] LAYOUT --- */
+.app-container {
+    display: flex;
+    width: 100%;
+    height: 100vh;
+    padding: 20px;
+    gap: 20px;
+    z-index: 2;
+}
+
+/* --- [SECTION] SCROLLBARS --- */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--secondary-light); }
+::-webkit-scrollbar-thumb { background: var(--accent-blue); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent-pink); }
+
+/* --- [SECTION] SIDEBAR (SETS - for index_modern.html) --- */
+.sidebar {
+    width: 300px;
+    flex-shrink: 0;
+    background: rgba(255, 255, 255, 0.75); /* Frosted glass effect */
+    backdrop-filter: blur(12px);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 10px 30px var(--shadow-color);
+    overflow: hidden;
+}
+
+.sidebar-header { padding: 20px; border-bottom: 1px solid var(--border-color); }
+.sidebar-header h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    background: linear-gradient(to right, var(--accent-blue), var(--accent-pink));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.sets-container {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.set-card {
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: var(--border-radius);
+    padding: 16px;
+    position: relative;
+    transition: var(--transition);
+    cursor: pointer;
+    border: 1px solid transparent;
+    backdrop-filter: blur(5px);
+}
+.set-card:hover {
+    background: rgba(255, 255, 255, 0.9);
+    border-color: rgba(13, 110, 253, 0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px var(--shadow-color);
+}
+.set-card.active {
+    background: linear-gradient(135deg, rgba(13, 110, 253, 0.1), rgba(214, 51, 132, 0.05));
+    border: 1px solid var(--accent-blue);
+    box-shadow: 0 0 20px rgba(13, 110, 253, 0.2), inset 0 0 10px rgba(13, 110, 253, 0.1);
+}
+.set-card.active::after {
+    content: "";
+    position: absolute;
+    top: -1px; left: -1px; right: -1px; bottom: -1px;
+    border-radius: var(--border-radius);
+    background: linear-gradient(135deg, var(--accent-blue), transparent, var(--accent-pink));
+    z-index: -1;
+    animation: border-pulse 3s infinite;
+}
+@keyframes border-pulse { 0% { opacity: 0.4; } 50% { opacity: 0.8; } 100% { opacity: 0.4; } }
+
+.set-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.set-name { font-size: 1.1rem; font-weight: 500; color: var(--text-dark); }
+.set-timing { display: flex; align-items: center; gap: 5px; font-size: 0.9rem; color: var(--accent-orange); }
+
+.set-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    min-height: 24px;
+}
+.set-info-left { display: flex; align-items: center; gap: 10px; }
+.set-reorder-controls { display: flex; align-items: center; gap: 4px; opacity: 0; transition: var(--transition); }
+.set-card:hover .set-reorder-controls { opacity: 1; }
+.reorder-btn {
+    background: transparent; border: none; cursor: pointer; color: var(--text-muted);
+    padding: 2px; border-radius: 50%; width: 22px; height: 22px;
+    display: flex; align-items: center; justify-content: center; transition: var(--transition);
+}
+.reorder-btn svg { width: 16px; height: 16px; }
+.reorder-btn:hover { color: var(--accent-blue); background: rgba(13, 110, 253, 0.1); }
+.set-actions { display: flex; gap: 8px; opacity: 0; transition: var(--transition); }
+.set-card:hover .set-actions { opacity: 1; }
+
+.sidebar-footer { padding: 15px; border-top: 1px solid var(--border-color); }
+.add-set-btn {
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-pink));
+    color: var(--panel-light);
+    border: none; border-radius: var(--border-radius); padding: 14px; width: 100%;
+    font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px;
+    cursor: pointer; transition: var(--transition); box-shadow: 0 5px 15px rgba(13, 110, 253, 0.2);
+    position: relative; overflow: hidden;
+}
+.add-set-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(13, 110, 253, 0.3); }
+.add-set-btn::after {
+    content: ""; position: absolute; top: -50%; left: -60%;
+    width: 20px; height: 200%; background: rgba(255, 255, 255, 0.5);
+    transform: rotate(25deg); transition: all 0.6s;
+}
+.add-set-btn:hover::after { left: 120%; }
+
+/* --- [SECTION] MAIN CONTENT (for index_modern.html) --- */
+.main-content {
+    flex-grow: 1; display: flex; flex-direction: column;
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(12px);
+    border-radius: var(--border-radius); border: 1px solid var(--border-color);
+    box-shadow: 0 10px 30px var(--shadow-color); overflow: hidden;
+}
+
+.main-header {
+    padding: 20px; border-bottom: 1px solid var(--border-color);
+    display: flex; justify-content: space-between; align-items: center;
+    flex-shrink: 0; background: rgba(255, 255, 255, 0.4);
+}
+
+.header-left { display: flex; align-items: center; gap: 15px; }
+.set-title {
+    font-size: 1.6rem; font-weight: 600;
+    background: linear-gradient(to right, var(--accent-blue), var(--text-dark));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.status-indicator {
+    display: flex; align-items: center; gap: 8px;
+    background: rgba(25, 135, 84, 0.1); padding: 6px 12px;
+    border-radius: 20px; font-size: 0.9rem; color: #146c43; transition: var(--transition);
+}
+.status-dot {
+    width: 10px; height: 10px; background: var(--accent-green);
+    border-radius: 50%; box-shadow: 0 0 10px var(--accent-green);
+    animation: pulse 2s infinite; transition: var(--transition);
+}
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(25, 135, 84, 0.7); }
+    70% { box-shadow: 0 0 0 8px rgba(25, 135, 84, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(25, 135, 84, 0); }
+}
+.status-indicator.status-offline { background: rgba(220, 53, 69, 0.1); color: #b02a37; }
+.status-indicator.status-offline .status-dot { background: var(--accent-red); box-shadow: 0 0 10px var(--accent-red); animation: none; }
+.header-actions { display: flex; gap: 12px; }
+.header-btn {
+    background: rgba(255, 255, 255, 0.5); border: 1px solid var(--border-color);
+    color: var(--text-dark); border-radius: var(--border-radius); padding: 8px 16px;
+    display: flex; align-items: center; gap: 8px; cursor: pointer;
+    transition: var(--transition); backdrop-filter: blur(2px);
+}
+.header-btn:hover { background: rgba(13, 110, 253, 0.1); border-color: var(--accent-blue); transform: translateY(-2px); }
+
+.rules-container { flex-grow: 1; overflow-y: auto; padding: 20px; }
+.rules-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+    gap: 20px;
+}
+.rule-card {
+    background: rgba(255, 255, 255, 0.5); border-radius: var(--border-radius);
+    border: 1px solid rgba(0, 0, 0, 0.1); transition: var(--transition);
+    overflow: hidden; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    backdrop-filter: blur(5px); display: flex; flex-direction: column;
+}
+.rule-card.collapsible-rule { cursor: pointer; }
+.rule-card:hover { border-color: rgba(13, 110, 253, 0.4); transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); }
+
+.rule-card-header {
+    padding: 12px 16px; background: rgba(0,0,0,0.03);
+    border-bottom: 1px solid var(--border-color);
+    display: flex; justify-content: space-between; align-items: center;
+}
+.rule-header-info { display: flex; flex-direction: column; }
+.rule-name { font-size: 1.1rem; font-weight: 500; }
+.rule-priority { color: var(--text-muted); font-size: 0.9rem; }
+
+.run-btn-collapsed {
+    width: 40px; height: 40px; border-radius: 50%; background: rgba(233, 236, 239, 0.6);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem; color: var(--accent-blue);
+    border: 1px solid rgba(0, 0, 0, 0.1); cursor: pointer; transition: all 0.3s ease;
+}
+.run-btn-collapsed:hover { background: var(--accent-blue); color: var(--panel-light); transform: scale(1.1); }
+.rule-card-body {
+    display: flex; gap: 16px; flex-grow: 1;
+    max-height: 0; overflow: hidden; padding: 0 16px;
+    transition: max-height 0.4s ease-out, padding 0.4s ease-out;
+}
+.rule-card.expanded .rule-card-body { max-height: 400px; padding: 16px; }
+
+.rule-conditions-pane, .rule-action-pane, .rule-controls-pane { display: flex; flex-direction: column; }
+.rule-conditions-pane { flex: 1.5; padding-right: 16px; border-right: 1px solid var(--border-color); }
+.pane-title { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 10px; }
+.conditions-list { list-style: none; padding: 0; margin: 0; max-height: 120px; overflow-y: auto; }
+.conditions-list li { margin-bottom: 8px; font-size: 0.9rem; line-height: 1.4; }
+.rule-action-pane { flex: 1.2; align-items: center; text-align: center; justify-content: center; }
+.action-icon { font-size: 2.5rem; color: var(--accent-blue); margin-bottom: 12px; }
+.action-type { font-weight: 500; margin-bottom: 4px; }
+.action-details { font-size: 0.9rem; color: var(--text-muted); word-break: break-word; }
+.action-details-list { list-style: none; padding: 0; margin: 0; max-height: 120px; overflow-y: auto; font-size: 0.9rem; color: var(--text-muted); text-align: center; width: 100%; }
+.action-details-list li { margin-bottom: 4px; word-break: break-word; }
+
+.rule-controls-pane { flex-basis: 50px; align-items: center; justify-content: center; gap: 12px; }
+.control-btn {
+    width: 36px; height: 36px; border-radius: 50%; background: rgba(233, 236, 239, 0.6);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-dark); border: none; cursor: pointer; transition: var(--transition); backdrop-filter: blur(2px);
+}
+.control-btn:hover { background: var(--accent-blue); color: var(--panel-light); transform: scale(1.1); box-shadow: 0 0 12px rgba(13, 110, 253, 0.3); }
+.control-btn.delete:hover { background: var(--accent-red); }
+
+.add-rule-card {
+    display: flex; align-items: center; justify-content: center; min-height: 200px;
+    border: 2px dashed rgba(13, 110, 253, 0.5); background: transparent; color: rgba(13, 110, 253, 0.7);
+    cursor: pointer; box-shadow: none; backdrop-filter: none;
+}
+.add-rule-card:hover {
+    border-color: var(--accent-blue); background: rgba(13, 110, 253, 0.05); color: var(--accent-blue);
+    border-style: solid; transform: translateY(-5px) scale(1.02); box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+.add-rule-content { text-align: center; transition: var(--transition); }
+.add-rule-card:hover .add-rule-content { transform: scale(1.05); }
+.add-rule-content i { font-size: 3rem; margin-bottom: 10px; }
+.add-rule-content span { display: block; font-weight: 500; font-size: 1.2rem; }
+
+.run-all-container { padding: 20px 0 0; margin-top: auto; border-top: 1px solid var(--border-color); }
+.run-all-btn {
+    width: 100%; background: linear-gradient(135deg, var(--accent-blue), var(--accent-pink));
+    color: var(--panel-light); border: none; border-radius: var(--border-radius);
+    padding: 16px; font-weight: 600; font-size: 1.1rem;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    cursor: pointer; transition: var(--transition); box-shadow: 0 5px 20px rgba(13, 110, 253, 0.3);
+    position: relative; overflow: hidden;
+}
+.run-all-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(13, 110, 253, 0.4); }
+.run-all-btn::after {
+    content: ""; position: absolute; top: -50%; left: -60%; width: 20px; height: 200%;
+    background: rgba(255, 255, 255, 0.5); transform: rotate(25deg); transition: all 0.6s;
+}
+.run-all-btn:hover::after { left: 120%; }
+
+.no-rules-message { grid-column: 1 / -1; text-align: center; padding: 40px; font-size: 1.2rem; color: var(--text-muted); }
+
+/* --- [SECTION] ANIMATIONS --- */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.set-card, .rule-card { animation: fadeIn 0.5s ease forwards; }
+
+/* --- [SECTION] MODAL STYLES --- */
+.modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    background-color: rgba(248, 249, 250, 0.8);
+    backdrop-filter: blur(8px);
+    display: flex; justify-content: center; align-items: center;
+    z-index: 1000; padding: 20px;
+    opacity: 0; visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0s 0.3s;
+}
+.modal-overlay[style*="display: flex"] { opacity: 1; visibility: visible; transition: opacity 0.3s ease, visibility 0s 0s; }
+.modal-content {
+    background: var(--panel-light); padding: 25px 30px;
+    border-radius: var(--border-radius); border: 1px solid var(--border-color);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    width: 100%; max-width: 720px; max-height: 90vh;
+    overflow-y: auto; position: relative;
+    transform: scale(0.95) translateY(10px); transition: transform 0.3s ease;
+}
+.modal-overlay[style*="display: flex"] .modal-content { transform: scale(1) translateY(0); }
+.modal-content .close-button {
+    position: absolute; top: 15px; right: 15px; background: transparent; border: none;
+    font-size: 1.8rem; color: var(--text-muted); cursor: pointer;
+    line-height: 1; padding: 0; transition: color 0.2s ease, transform 0.2s ease;
+}
+.modal-content .close-button:hover { color: var(--accent-red); transform: rotate(90deg) scale(1.1); }
+.modal-content h3 {
+    margin-bottom: 20px; font-size: 1.6rem; font-weight: 600;
+    background: linear-gradient(to right, var(--accent-blue), var(--accent-pink));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.modal-content form div { margin-bottom: 15px; }
+.modal-content label { display: block; margin-bottom: 5px; color: var(--text-muted); font-size: 0.9rem; font-weight: 500; }
+.modal-content input[type="text"], .modal-content input[type="number"], .modal-content select, .modal-content textarea {
+    width: 100%; padding: 10px 12px; background-color: var(--secondary-light);
+    border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-dark);
+    font-size: 1rem; transition: border-color 0.2s, box-shadow 0.2s;
+}
+.modal-content input:focus, .modal-content select:focus, .modal-content textarea:focus {
+    outline: none; border-color: var(--accent-blue);
+    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.25);
+}
+#conditions-container .condition-row {
+    position: relative; background: rgba(233, 236, 239, 0.5);
+    border: 1px solid var(--border-color); border-radius: 8px;
+    padding: 15px; margin-bottom: 25px;
+    display: flex; align-items: center; gap: 10px;
+}
+#conditions-container .nested-condition-row { margin-left: 20px; width: calc(100% - 20px); }
+.remove-condition-button {
+    position: absolute; top: -12px; right: -12px; width: 28px; height: 28px;
+    border-radius: 50%; background: rgba(220, 53, 69, 0.2);
+    backdrop-filter: blur(4px); border: 1px solid rgba(220, 53, 69, 0.5);
+    color: var(--accent-red); display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem; font-weight: 600; line-height: 1; cursor: pointer;
+    z-index: 10; transition: var(--transition); opacity: 0; pointer-events: none; transform: scale(0.8);
+}
+#conditions-container .condition-row:hover .remove-condition-button { opacity: 1; pointer-events: auto; transform: scale(1); }
+.remove-condition-button:hover {
+    background: var(--accent-red); color: var(--panel-light); border-color: var(--accent-red);
+    transform: scale(1.15) rotate(90deg); box-shadow: 0 0 12px rgba(220, 53, 69, 0.5);
+}
+.modal-content button[type="submit"], .modal-content .primary-button, .modal-content .add-condition-button, .modal-content .add-destination-button {
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-pink));
+    color: var(--panel-light); border: none; border-radius: 8px;
+    padding: 12px 20px; font-weight: 600; cursor: pointer;
+    transition: var(--transition); box-shadow: 0 4px 10px rgba(13, 110, 253, 0.2);
+    display: inline-block; margin-top: 10px;
+}
+.modal-content button[type="submit"]:hover, .modal-content .primary-button:hover, .modal-content .add-condition-button:hover, .modal-content .add-destination-button:hover {
+    transform: translateY(-2px); box-shadow: 0 6px 15px rgba(13, 110, 253, 0.3);
+}
+.modal-scroll-container {
+    border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);
+    margin: 1em 0; padding: 0.5em 0;
+}
+#manual-run-rule-list { list-style: none; padding: 0; margin: 0; max-height: 40vh; overflow-y: auto; padding-right: 10px; }
+#manual-run-rule-list li { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-radius: 6px; transition: background-color 0.2s; }
+#manual-run-rule-list li:hover { background-color: rgba(0, 0, 0, 0.03); }
+#manual-run-rule-list .rule-name { flex-grow: 1; }
+#manual-run-rule-list .options { display: flex; align-items: center; gap: 15px; color: var(--text-muted); }
+#manual-run-rule-list .impact-estimate.success { color: var(--accent-green); }
+#manual-run-rule-list .impact-estimate.error { color: var(--accent-red); }
+.modal-actions {
+    margin-top: 20px; padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+    display: flex; justify-content: flex-end; gap: 10px;
+}
+.modal-content .secondary-button {
+    background: var(--secondary-light); border: 1px solid var(--border-color);
+    color: var(--text-dark); padding: 12px 20px; border-radius: 8px;
+    font-weight: 500; transition: var(--transition); cursor: pointer;
+}
+.modal-content .secondary-button:hover { background: var(--primary-light); border-color: var(--text-muted); }
+/*
+=====================================================================
+== modern_Defaultv2.css - PART 2: SETTINGS & LOGS PAGES
+=====================================================================
+This file defines styles for the secondary pages like Settings and
+Activity Logs, ensuring they match the modern light theme aesthetic.
+These styles are for standard scrolling pages, not the main app layout.
+*/
+
+/* --- [SECTION] GENERIC PAGE LAYOUT (for Settings/Logs) --- */
+/* Override the flex layout for non-app pages */
+body:not(:has(.app-container)) {
+    display: block;
+    overflow-y: auto;
+    padding: 20px;
+}
+
+/* General Header for secondary pages */
+body:not(:has(.app-container)) header {
+    max-width: 1200px;
+    margin: 0 auto 20px auto;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(12px);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 10px 30px var(--shadow-color);
+}
+
+body:not(:has(.app-container)) header h1 {
+    font-size: 1.8rem;
+    font-weight: 600;
+    background: linear-gradient(to right, var(--accent-blue), var(--accent-pink));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+body:not(:has(.app-container)) header nav {
+    display: flex;
+    gap: 12px;
+}
+
+body:not(:has(.app-container)) header nav button,
+body:not(:has(.app-container)) .secondary-button {
+    background: rgba(255, 255, 255, 0.5);
+    border: 1px solid var(--border-color);
+    color: var(--text-dark);
+    border-radius: 8px; /* Slightly smaller radius for buttons */
+    padding: 8px 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    backdrop-filter: blur(2px);
+}
+
+body:not(:has(.app-container)) header nav button:hover,
+body:not(:has(.app-container)) .secondary-button:hover {
+    background: rgba(13, 110, 253, 0.1);
+    border-color: var(--accent-blue);
+    transform: translateY(-2px);
+}
+
+/* Main content area for Settings/Logs */
+body:not(:has(.app-container)) main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0;
+}
+
+/* Generic container for sections on these pages */
+body:not(:has(.app-container)) main section {
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(12px);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    padding: 25px 30px;
+    box-shadow: 0 10px 30px var(--shadow-color);
+    margin-bottom: 25px;
+}
+
+/* Make the form a transparent container */
+#settings-form {
+    background: transparent;
+    padding: 0;
+    border: none;
+    box-shadow: none;
+}
+
+/* Individual panels that are toggled */
+.settings-panel {
+    display: none; /* Hide panels by default */
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(12px);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    padding: 25px 30px;
+    box-shadow: 0 10px 30px var(--shadow-color);
+}
+.settings-panel.active {
+    display: block; /* Show only the active panel */
+}
+
+body:not(:has(.app-container)) main hr {
+    border: 0;
+    height: 1px;
+    background: var(--border-color);
+    margin: 30px 0;
+}
+
+/* --- [SECTION] SETTINGS PAGE STYLES --- */
+
+/* New styles for the settings page layout */
+.settings-layout {
+    display: flex;
+    gap: 25px;
+    align-items: flex-start;
+}
+aside.side-menu {
+    flex: 0 0 240px; /* Do not grow, do not shrink, start at 240px */
+    position: sticky;
+    top: 40px; /* Position relative to the viewport, below the header */
+}
+.side-menu-header h3 {
+    font-weight: 600;
+    color: var(--text-dark);
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-color);
+}
+.settings-content {
+    flex-grow: 1; /* Take up the remaining space */
+    min-width: 0; /* Prevent flexbox overflow issues */
+}
+
+/* New styles for side menu navigation */
+.side-menu-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.side-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 15px;
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--text-muted);
+    background-color: transparent;
+    border: 1px solid transparent;
+    transition: var(--transition);
+    font-weight: 500;
+}
+.side-menu-item:hover {
+    background-color: var(--secondary-light);
+    color: var(--accent-blue);
+    transform: translateX(5px);
+}
+.side-menu-item.active {
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-pink));
+    color: var(--panel-light);
+    border-color: transparent;
+    font-weight: 600;
+    box-shadow: 0 4px 15px rgba(13, 110, 253, 0.25);
+    transform: translateX(5px);
+}
+.side-menu-item .menu-icon {
+    font-size: 1.2rem;
+}
+
+/* New: Style for the header inside the form */
+.settings-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+#settings-form h2, .settings-panel > h3 {
+    font-weight: 600;
+    color: var(--text-dark);
+}
+#settings-form h2 {
+    font-size: 1.6rem;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border-color);
+}
+/* Style for panel titles */
+.settings-panel > h3 {
+    font-size: 1.6rem;
+    margin: 0 0 20px 0;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border-color);
+}
+/* Subtitles within a panel */
+.panel-subtitle {
+    font-size: 1.3rem;
+    margin: 25px 0 15px;
+    color: var(--accent-blue);
+}
+
+/* New: Styles for custom-styled checkboxes */
+.checkbox-setting-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    margin-bottom: 15px;
+    padding: 15px 0;
+    border-bottom: 1px solid var(--secondary-light);
+}
+.checkbox-setting-item:last-child {
+    border-bottom: none;
+}
+.checkbox-setting-item input[type="checkbox"] {
+    flex-shrink: 0;
+    margin-top: 5px;
+    width: 18px;
+    height: 18px;
+    accent-color: var(--accent-blue); /* Modern way to color checkboxes */
+}
+.checkbox-setting-item label {
+    margin-bottom: 0;
+    font-weight: normal;
+    color: var(--text-dark);
+}
+.checkbox-main-label {
+    display: block;
+    color: var(--text-dark);
+    font-weight: 500;
+}
+.checkbox-sub-label {
+    display: block;
+    font-size: 0.9em;
+    color: var(--text-muted);
+    margin-top: 4px;
+}
+
+.setting-row {
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+    border-bottom: 1px solid var(--secondary-light);
+}
+.setting-row:last-child { border-bottom: none; }
+
+.setting-row label, .checkbox-row label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+.setting-row input[type="text"],
+.setting-row input[type="number"],
+.setting-row input[type="password"],
+.setting-row select {
+    width: 100%;
+    padding: 10px 12px;
+    background-color: var(--secondary-light);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-dark);
+    font-size: 1rem;
+    transition: var(--transition);
+}
+.setting-row input:focus, .setting-row select:focus {
+    outline: none;
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.25);
+}
+
+.setting-description small {
+    display: block;
+    margin-top: 8px;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+.setting-description strong {
+    color: var(--accent-orange);
+    font-weight: 600;
+}
+
+/* Toggle Switch */
+.toggle-switch-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.toggle-switch-label { color: var(--text-dark); font-weight: 500; }
+.toggle-switch { position: relative; display: inline-block; width: 50px; height: 24px; }
+.toggle-switch input { opacity: 0; width: 0; height: 0; }
+.slider {
+    position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+    background-color: var(--secondary-light);
+    border: 1px solid var(--border-color);
+    transition: .4s; border-radius: 24px;
+}
+.slider:before {
+    position: absolute; content: ""; height: 18px; width: 18px; left: 2px; bottom: 2px;
+    background-color: var(--text-muted); transition: .4s; border-radius: 50%;
+}
+input:checked + .slider { background: linear-gradient(135deg, var(--accent-blue), var(--accent-pink)); border-color: transparent; }
+input:checked + .slider:before { background-color: white; transform: translateX(26px); }
+
+/* Collapsible Section */
+.collapsible-header {
+    background: rgba(0, 0, 0, 0.03);
+    border-radius: 8px; padding: 15px 20px;
+    cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+    transition: var(--transition); border: 1px solid var(--border-color);
+}
+.collapsible-header:hover { border-color: var(--accent-blue); }
+.collapsible-header .arrow { color: var(--text-muted); transition: transform 0.3s ease; }
+.collapsible-header.active .arrow { transform: rotate(180deg); color: var(--accent-blue); }
+.collapsible-content {
+    max-height: 0; overflow: hidden;
+    transition: max-height 0.4s ease-out, padding 0.4s ease-out;
+    background: rgba(233, 236, 239, 0.3);
+    border-radius: 0 0 8px 8px; margin-top: -1px;
+    border: 1px solid transparent; border-top: none;
+}
+.collapsible-content.active {
+    max-height: 2000px; padding: 25px 20px 15px; border-color: var(--border-color);
+}
+
+/* Automation Layout */
+.automation-layout-container { display: flex; flex-wrap: wrap; gap: 30px; margin-top: 15px; }
+.automation-column-left { flex: 2; min-width: 300px; }
+.automation-column-right { flex: 1; min-width: 300px; padding-left: 30px; border-left: 1px solid var(--border-color); }
+@media (max-width: 768px) {
+    .automation-column-right { border-left: none; padding-left: 0; }
+}
+
+
+/* Note/Warning Box */
+.note {
+    background: rgba(220, 53, 69, 0.05); border-left: 4px solid var(--accent-red);
+    padding: 15px; border-radius: 0 8px 8px 0; margin: 20px 0;
+}
+.note p, .note ul { color: var(--text-dark); margin: 8px 0; }
+.note ul { padding-left: 20px; }
+
+/* Buttons */
+.save-settings-button, .manual-action-button {
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-pink));
+    color: var(--panel-light); border: none; border-radius: 8px; padding: 12px 25px;
+    font-weight: 600; cursor: pointer; transition: var(--transition);
+    box-shadow: 0 4px 15px rgba(13, 110, 253, 0.2);
+    margin-top: 20px;
+}
+.save-settings-button:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(13, 110, 253, 0.3); }
+
+.manual-action-button { background: var(--secondary-light); border: 1px solid var(--border-color); color: var(--text-dark); font-size: 0.9rem; box-shadow: none; }
+.manual-action-button:hover { background: rgba(13, 110, 253, 0.1); border-color: var(--accent-blue); }
+
+/* Flash Messages */
+#flashes-container { position: fixed; top: 20px; right: 20px; z-index: 1000; max-width: 400px; }
+.flash-message {
+    padding: 15px 20px; border-radius: var(--border-radius); margin-bottom: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); animation: slideIn 0.5s ease, fadeOut 0.5s ease 4.5s forwards;
+    border-left: 4px solid; color: var(--text-dark);
+}
+.flash-success { background: rgba(25, 135, 84, 0.1); border-color: var(--accent-green); }
+.flash-error { background: rgba(220, 53, 69, 0.1); border-color: var(--accent-red); }
+.flash-info { background: rgba(13, 110, 253, 0.1); border-color: var(--accent-blue); }
+
+@keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+@keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+
+/* --- [SECTION] LOGS PAGE STYLES --- */
+#logs_page h2, #lookup-section h2, #log-statistics-section h2, #detailed-logs-section h2 {
+    font-size: 1.6rem; margin-bottom: 20px; color: var(--text-dark); font-weight: 600;
+}
+.top-container { display: grid; grid-template-columns: 1fr 1.5fr; gap: 25px; align-items: start; }
+@media (max-width: 992px) { .top-container { grid-template-columns: 1fr; } }
+
+/* Lookup & Filters */
+.lookup-controls, .filters-container, #log-search-form .form-actions {
+    display: flex; flex-wrap: wrap; gap: 15px; align-items: center; margin-bottom: 20px;
+}
+#log-search-form { background: rgba(0, 0, 0, 0.02); padding: 20px; border-radius: 8px; border: 1px solid var(--border-color); }
+.log-search-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; width: 100%; margin-bottom: 15px; }
+#log-search-form label, .filters-container label { font-weight: 500; color: var(--text-muted); font-size: 0.9rem; }
+#log-search-form input, #log-search-form select,
+.lookup-controls input, .lookup-controls select,
+.filters-container input, .filters-container select {
+    width: 100%; padding: 8px 10px; background-color: var(--primary-light);
+    border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-dark);
+}
+#log-search-form button, .lookup-controls button {
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-pink));
+    color: var(--panel-light); border: none; border-radius: 8px;
+    padding: 10px 20px; font-weight: 600; cursor: pointer; transition: var(--transition);
+}
+#log-search-form button:hover, .lookup-controls button:hover { transform: translateY(-2px); }
+
+/* Lookup Results */
+#lookup-results-container { margin-top: 20px; }
+.lookup-result-card {
+    background: var(--primary-light); border: 1px solid var(--border-color);
+    border-radius: 8px; padding: 15px; margin-bottom: 10px;
+}
+.lookup-result-card h3 { color: var(--accent-blue); margin-bottom: 10px; }
+.lookup-result-card p { margin: 5px 0; color: var(--text-muted); font-size: 0.9rem; word-break: break-all; }
+.lookup-result-card strong { color: var(--text-dark); }
+
+/* Chart */
+.chart-container { position: relative; height: 350px; width: 100%; }
+
+/* Logs Table */
+.table-responsive { overflow-x: auto; }
+#detailed-logs-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+#detailed-logs-table th, #detailed-logs-table td { padding: 12px 15px; text-align: left; border-bottom: 1px solid var(--border-color); }
+#detailed-logs-table thead { background: rgba(0, 0, 0, 0.03); }
+#detailed-logs-table tbody tr:hover { background-color: rgba(13, 110, 253, 0.05); }
+#detailed-logs-table .status-success { color: var(--accent-green); font-weight: 500; }
+#detailed-logs-table .status-failure, #detailed-logs-table .status-failed { color: var(--accent-red); font-weight: 500; }
+#detailed-logs-table .status-partial { color: var(--accent-orange); font-weight: 500; }
+
+/* Pagination */
+.pagination-controls {
+    display: flex; justify-content: center; align-items: center;
+    gap: 10px; margin-top: 20px;
+}
+.pagination-controls button {
+    background: var(--secondary-light); border: 1px solid var(--border-color);
+    color: var(--text-dark); padding: 8px 12px; border-radius: 8px;
+    cursor: pointer; transition: var(--transition);
+}
+.pagination-controls button:disabled { opacity: 0.5; cursor: not-allowed; }
+.pagination-controls button:not(:disabled):hover { background: var(--primary-light); border-color: var(--accent-blue); }
+.pagination-controls #page-info { font-weight: 500; }
+
+/* General Helper classes */
+.loading-message, .error-message, .results-summary {
+    text-align: center; padding: 20px; font-size: 1.1rem;
+    color: var(--text-muted); border-radius: 8px; margin: 20px 0;
+}
+.error-message { background: rgba(220, 53, 69, 0.1); color: var(--accent-red); }
+.results-summary { background: rgba(13, 110, 253, 0.05); color: var(--accent-blue); }
+
+/* Footer */
+body:not(:has(.app-container)) footer {
+    text-align: center; padding: 40px 20px 20px;
+    color: var(--text-muted); font-size: 0.9rem;
+    margin-top: auto;
+}
+/*
+=====================================================================
+== modern_Defaultv2.css - PART 3: RESPONSIVENESS & UI ENHANCEMENTS
+=====================================================================
+This file provides responsive adjustments and polishes UI components
+like toggles, collapsible sections, and status messages for a
+consistent modern light theme experience.
+*/
+
+/* --- [SECTION] RESPONSIVE ADJUSTMENTS --- */
+@media (max-width: 1200px) {
+    /* On smaller desktops, allow the main app container to shrink a bit */
+    .app-container {
+        padding: 15px;
+        gap: 15px;
+    }
+}
+
+@media (max-width: 992px) {
+    /* For tablets, stack the sidebar and main content */
+    .app-container {
+        flex-direction: column;
+        height: auto;
+        min-height: 100vh;
+    }
+    .sidebar {
+        width: 100%;
+        height: auto;
+        max-height: 40vh; /* Limit sidebar height on smaller screens */
+    }
+    .main-content {
+        height: auto;
+    }
+    .rules-grid {
+        /* Switch to a single column layout for rules on smaller screens */
+        grid-template-columns: 1fr;
+    }
+    .rule-card .rule-card-body {
+        /* Allow body to be more flexible */
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .rule-conditions-pane {
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+        padding-right: 0;
+        padding-bottom: 16px;
+    }
+    .rule-action-pane {
+        padding-top: 16px;
+    }
+    .rule-controls-pane {
+        flex-direction: row;
+        flex-basis: auto;
+        padding-top: 16px;
+    }
+    
+    /* Logs Page adjustments */
+    .top-container {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 768px) {
+    /* On phones, further simplify layouts */
+    .main-header {
+        flex-direction: column;
+        gap: 15px;
+        align-items: flex-start;
+    }
+    .header-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    /* Settings Page layout adjustments */
+    .automation-layout-container {
+        flex-direction: column;
+        gap: 0;
+    }
+    .automation-column-right {
+        padding-left: 0;
+        border-left: none;
+        border-top: 1px solid var(--border-color);
+        padding-top: 20px;
+        margin-top: 20px;
+    }
+
+    .modal-content {
+        padding: 20px;
+    }
+}
+
+
+/* --- [SECTION] UI COMPONENT ENHANCEMENTS --- */
+
+/* Improved Collapsible Section Animation (for Settings Page) */
+.collapsible-content {
+    /* Use a more dynamic easing function for the animation */
+    transition: max-height 0.4s cubic-bezier(0.22, 0.61, 0.36, 1), padding 0.4s ease;
+}
+/* Group contents of advanced settings visually */
+#advanced-settings-content {
+    background: rgba(233, 236, 239, 0.5); /* Slightly darker background to contain items */
+}
+
+/* Enhanced Toggle Switch (for Settings Page) */
+.toggle-switch-container {
+    padding: 12px 0;
+}
+.toggle-switch-container .manual-action-button {
+    margin-left: auto; /* Push manual button to the far right */
+}
+
+/* Status Message Styling (e.g., for API connection status on settings) */
+#status-message {
+    padding: 15px 20px;
+    border-radius: 8px;
+    margin: 20px 0;
+    border-left: 4px solid;
+    display: none; /* JS will show this */
+}
+#status-message[style*="block"] {
+    display: block !important;
+}
+
+.status-message.status-info {
+    background: rgba(13, 110, 253, 0.1);
+    border-color: var(--accent-blue);
+    color: #0a58ca;
+}
+.status-message.status-success {
+    background: rgba(25, 135, 84, 0.1);
+    border-color: var(--accent-green);
+    color: #146c43;
+}
+.status-message.status-error {
+    background: rgba(220, 53, 69, 0.1);
+    border-color: var(--accent-red);
+    color: #b02a37;
+}
+
+/* Permission List styling inside a .note box */
+.note ul {
+    padding-left: 20px;
+    margin: 10px 0;
+    list-style-type: disc;
+}
+.note li {
+    margin-bottom: 8px;
+    color: var(--text-muted);
+}
+.note li b {
+    color: var(--text-dark);
+}
+
+/* Ensure consistent button styles on settings page */
+#settings-form .secondary-button,
+.automation-column-right button {
+    background: var(--secondary-light);
+    border: 1px solid var(--border-color);
+    color: var(--text-dark);
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: var(--transition);
+    cursor: pointer;
+    display: block;
+    width: auto;
+    margin-top: 10px;
+}
+#settings-form .secondary-button:hover,
+.automation-column-right button:hover {
+    background: var(--primary-light);
+    border-color: var(--text-muted);
+    transform: translateY(-2px);
+}
+
+/* Align save button in API section header */
+#hydrus-api-settings > div:first-of-type {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+#hydrus-api-settings h3 {
+    margin-top: 0;
+}
+
+
+/* --- [SECTION] LOGS PAGE - FINAL STYLING --- */
+
+/* Style for section containers on the logs page */
+#lookup-section, 
+#log-statistics-section,
+#detailed-logs-section {
+    flex: 1;
+    min-width: 300px;
+}
+
+/* Lookup Results Area */
+#lookup-results-container {
+    margin-top: 20px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+.lookup-results-grid {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 8px 15px;
+    align-items: center;
+}
+.lookup-results-grid dt {
+    font-weight: 500;
+    color: var(--text-muted);
+    text-align: right;
+}
+.lookup-results-grid dd {
+    margin: 0;
+    word-break: break-all;
+    background: var(--secondary-light);
+    padding: 4px 8px;
+    border-radius: 6px;
+}
+
+/* --- [SECTION] SETS PAGE - FINAL STYLING --- */
+/* These styles are for the legacy sets page, not the modern sidebar. */
+/* They ensure it remains functional and visually acceptable. */
+body:has(#set-selector) main {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 25px 30px;
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(12px);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 10px 30px var(--shadow-color);
+}
+.set-controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin: 20px auto;
+    padding: 15px;
+    max-width: 1200px;
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(8px);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+}
+#set-selector {
+    flex-grow: 1;
+    padding: 8px 10px; background-color: var(--primary-light);
+    border: 1px solid var(--border-color); border-radius: 8px;
+}
+.set-controls button {
+    background: var(--secondary-light); border: 1px solid var(--border-color);
+    color: var(--text-dark); padding: 8px 16px; border-radius: 8px;
+    cursor: pointer; transition: var(--transition);
+}
+.set-controls button:hover {
+    background: var(--primary-light); border-color: var(--accent-blue);
+}
+.set-controls .danger-button {
+    background: rgba(220, 53, 69, 0.1); border-color: rgba(220, 53, 69, 0.5);
+    color: var(--accent-red);
+}
+.set-controls .danger-button:hover {
+    background: var(--accent-red); color: white;
+}
+/* Legacy rules table on sets page */
+#rules-table {
+    width: 100%; border-collapse: separate; border-spacing: 0 5px;
+}
+#rules-table th { text-align: left; padding: 10px; color: var(--text-muted); }
+#rules-table td { padding: 15px; background: var(--secondary-light); vertical-align: middle; }
+#rules-table tr > td:first-child { border-radius: 8px 0 0 8px; }
+#rules-table tr > td:last-child { border-radius: 0 8px 8px 0; }
+#rules-table .rule-actions button {
+    background: transparent; border: none; font-size: 1rem; cursor: pointer;
+    color: var(--text-muted); margin: 0 4px; padding: 5px;
+    border-radius: 50%; width: 32px; height: 32px;
+    display: inline-flex; align-items: center; justify-content: center;
+    transition: var(--transition);
+}
+#rules-table .rule-actions button:hover {
+    background: rgba(13, 110, 253, 0.1); color: var(--accent-blue);
+}
+#rules-table .rule-actions .delete-button:hover {
+    background: rgba(220, 53, 69, 0.1); color: var(--accent-red);
+}
+
+/* --- [SECTION] Final Overrides & Fixes --- */
+a {
+    color: var(--accent-blue);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+a:hover {
+    color: var(--accent-pink);
+    text-decoration: underline;
+}
+
+/* Ensure linked buttons don't have underline */
+a.header-btn-link {
+    text-decoration: none;
+}
+/*
+=====================================================================
+== modern_Defaultv2.css - PART 4: DETAILED COMPONENTS & LEGACY SUPPORT
+=====================================================================
+This final part adds detailed styles for the Logs page components,
+including the statistics chart filters, log search form, table, and
+pagination. It also includes styles to support the older, non-sidebar
+'sets_modern.html' page for visual consistency.
+*/
+
+/* --- [SECTION] LOGS PAGE - STATISTICS & FILTERS --- */
+.filters-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+.filters-container label {
+    font-weight: 500;
+    color: var(--text-muted);
+}
+.filters-container select, .custom-date-range input[type="date"] {
+    padding: 8px 12px;
+    background-color: var(--primary-light);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-dark);
+}
+.custom-date-range {
+    display: flex;
+    gap: 10px;
+}
+#update-stats-chart-button {
+    background: var(--secondary-light);
+    border: 1px solid var(--border-color);
+    color: var(--text-dark);
+    border-radius: 8px;
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+#update-stats-chart-button:hover {
+    background: rgba(13, 110, 253, 0.1);
+    border-color: var(--accent-blue);
+    transform: translateY(-2px);
+}
+
+/* --- [SECTION] LOGS PAGE - SEARCH FORM --- */
+#detailed-logs-section {
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 25px;
+    box-shadow: 0 5px 20px var(--shadow-color);
+}
+.form-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+    border-top: 1px solid var(--border-color);
+    padding-top: 20px;
+}
+.form-actions button {
+    flex-grow: 1;
+    padding: 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: var(--transition);
+    font-weight: 600;
+}
+.form-actions button[type="submit"] {
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-pink));
+    color: var(--panel-light);
+    border: none;
+    box-shadow: 0 4px 15px rgba(13, 110, 253, 0.2);
+}
+.form-actions button[type="submit"]:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(13, 110, 253, 0.3);
+}
+#reset-search-logs-button {
+    background: var(--secondary-light);
+    border: 1px solid var(--border-color);
+    color: var(--text-dark);
+}
+#reset-search-logs-button:hover {
+    background: var(--primary-light);
+    border-color: var(--text-muted);
+}
+
+/* --- [SECTION] LOGS PAGE - TABLE & PAGINATION --- */
+.table-responsive {
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden; /* Clips the table corners */
+}
+#detailed-logs-table th {
+    background-color: rgba(0, 0, 0, 0.03);
+    font-weight: 600;
+    color: var(--text-dark);
+}
+#detailed-logs-table .status-pending {
+    color: var(--accent-orange);
+}
+.clickable-cell {
+    cursor: pointer;
+    color: var(--accent-blue);
+    text-decoration: none;
+    font-weight: 500;
+    transition: var(--transition);
+}
+.clickable-cell:hover {
+    color: var(--accent-pink);
+    text-decoration: underline;
+}
+
+/* --- [SECTION] LOGS PAGE - MESSAGES --- */
+.loading-message {
+    background: rgba(253, 126, 20, 0.1);
+    border-left: 4px solid var(--accent-orange);
+    color: #b1580d;
+}
+
+/* --- [SECTION] LEGACY SETS PAGE SUPPORT (sets_modern.html) --- */
+/* These styles ensure the non-sidebar sets page is usable with this theme. */
+body:has(#set-selector) {
+    display: block;
+    overflow-y: auto;
+    padding: 20px;
+}
+body:has(#set-selector) header {
+    max-width: 1200px;
+    margin: 0 auto 20px auto;
+    padding: 20px;
+    display: flex; justify-content: space-between; align-items: center;
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(12px);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 10px 30px var(--shadow-color);
+}
+body:has(#set-selector) header h1 {
+    font-size: 1.8rem;
+    font-weight: 600;
+    background: linear-gradient(to right, var(--accent-blue), var(--accent-pink));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+body:has(#set-selector) nav button {
+    background: rgba(255, 255, 255, 0.5);
+    border: 1px solid var(--border-color);
+    color: var(--text-dark); border-radius: 8px;
+    padding: 8px 16px; font-weight: 500;
+    cursor: pointer; transition: var(--transition);
+}
+body:has(#set-selector) nav button:hover {
+    background: rgba(13, 110, 253, 0.1);
+    border-color: var(--accent-blue);
+}
+body:has(#set-selector) main {
+    max-width: 1200px; margin: 0 auto;
+    padding: 25px 30px;
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(12px);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+}
+.set-controls {
+    display: flex; gap: 10px; align-items: center; margin-bottom: 20px;
+}
+#set-selector {
+    flex-grow: 1; padding: 10px 12px;
+    background-color: var(--secondary-light);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+}
+.set-controls button {
+    padding: 10px 16px; border-radius: 8px;
+    transition: var(--transition); cursor: pointer;
+    background: var(--secondary-light); border: 1px solid var(--border-color);
+    color: var(--text-dark);
+}
+.set-controls button:hover { background: var(--primary-light); border-color: var(--text-muted); }
+.set-controls .danger-button { background: rgba(220, 53, 69, 0.1); border-color: rgba(220, 53, 69, 0.4); color: var(--accent-red); }
+.set-controls .danger-button:hover { background: var(--accent-red); color: white; border-color: var(--accent-red); }
+
+#rules-table { width: 100%; border-collapse: separate; border-spacing: 0 8px; }
+#rules-table th { text-align: left; padding: 10px 15px; color: var(--text-muted); font-weight: 500; }
+#rules-table tbody tr { box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+#rules-table td { padding: 15px; background: var(--primary-light); vertical-align: middle; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); }
+#rules-table tr > td:first-child { border-left: 1px solid var(--border-color); border-radius: 8px 0 0 8px; }
+#rules-table tr > td:last-child { border-right: 1px solid var(--border-color); border-radius: 0 8px 8px 0; }
+#rules-table .rule-actions button {
+    background: transparent; border: none; cursor: pointer;
+    color: var(--text-muted); padding: 5px; border-radius: 50%;
+    width: 32px; height: 32px;
+    display: inline-flex; align-items: center; justify-content: center;
+    transition: var(--transition);
+}
+#rules-table .rule-actions button:hover { background: rgba(13, 110, 253, 0.1); color: var(--accent-blue); }
+#rules-table .rule-actions .delete-button:hover { background: rgba(220, 53, 69, 0.1); color: var(--accent-red); }
+
+/*
+=====================================================================
+== modern_Defaultv2.css - PART 5: LEGACY PAGE SUPPORT & FINAL POLISH
+=====================================================================
+This final part adds specific styling for the legacy Sets page to ensure
+it aligns with the modern light theme. It also includes final UI
+polishes and responsive tweaks for a complete and consistent look.
+*/
+
+/* --- [SECTION] MODAL UI POLISH --- */
+/* Add spacing below the 'Add Condition' button inside the rule modal */
+.modal-content .add-condition-button {
+    margin-bottom: 25px;
+}
+
+/* --- [SECTION] LEGACY SETS PAGE - MODERN ADAPTATION --- */
+/* These styles target the 'sets_modern.html' page specifically, using body:has() */
+
+/* Main content and header for the page */
+body:has(#set-selector) main {
+    background: transparent;
+    padding: 0;
+    box-shadow: none;
+    backdrop-filter: none;
+    border: none;
+}
+body:has(#set-selector) #current-set-name-display {
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin: 0 0 15px 0;
+    background: linear-gradient(to right, var(--accent-blue), var(--text-dark));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Set Controls (Dropdown and buttons) */
+body:has(#set-selector) .set-controls {
+    margin-bottom: 25px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+}
+body:has(#set-selector) .set-controls button:not(.danger-button) {
+    background-color: var(--secondary-light);
+}
+
+/* Improve hover readability for specific set control buttons by darkening the text */
+body:has(#set-selector) #add-new-set-btn:hover,
+body:has(#set-selector) #delete-current-set-btn:hover {
+    color: var(--text-dark);
+}
+
+/* Action buttons for adding rules */
+body:has(#set-selector) #update-services-button {
+    background: var(--secondary-light);
+    border: 1px solid var(--border-color);
+    color: var(--text-dark);
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: var(--transition);
+    margin-right: 15px;
+}
+body:has(#set-selector) #update-services-button:hover {
+    background: rgba(13, 110, 253, 0.1);
+    border-color: var(--accent-blue);
+}
+body:has(#set-selector) #add-rule-to-set-btn,
+body:has(#set-selector) #add-multiple-rules-btn {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    font-size: 1.6rem;
+    font-weight: bold;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    border: none;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+}
+body:has(#set-selector) #add-rule-to-set-btn {
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-pink));
+    color: var(--panel-light);
+}
+body:has(#set-selector) #add-rule-to-set-btn:hover {
+    transform: scale(1.1) rotate(90deg);
+    box-shadow: 0 8px 25px rgba(13, 110, 253, 0.3);
+}
+body:has(#set-selector) #add-multiple-rules-btn {
+    background: var(--secondary-light);
+    border: 1px solid var(--border-color);
+    color: var(--accent-blue);
+}
+body:has(#set-selector) #add-multiple-rules-btn:hover {
+    background: rgba(13, 110, 253, 0.1);
+    border-color: var(--accent-blue);
+    transform: scale(1.1);
+}
+
+/* Rules Table container - made transparent to feature the cards */
+body:has(#set-selector) #rules-table-container {
+    background: transparent;
+    border: none;
+    padding: 0;
+    box-shadow: none;
+    backdrop-filter: none;
+    margin-top: 25px;
+}
+
+/* Card-based styling for the rules table */
+body:has(#set-selector) #rules-table {
+    border-collapse: separate;
+    border-spacing: 0 12px; /* This creates the vertical gap between cards */
+}
+body:has(#set-selector) #rules-table thead {
+    display: none; /* Hide header, but keep for accessibility */
+}
+body:has(#set-selector) #rules-table tr {
+    transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+}
+body:has(#set-selector) #rules-table td {
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(8px);
+    padding: 15px 20px;
+    vertical-align: middle;
+    border: 1px solid var(--border-color);
+    border-width: 1px 0;
+}
+body:has(#set-selector) #rules-table td:first-child {
+    border-top-left-radius: var(--border-radius);
+    border-bottom-left-radius: var(--border-radius);
+    border-left-width: 1px;
+}
+body:has(#set-selector) #rules-table td:last-child {
+    border-top-right-radius: var(--border-radius);
+    border-bottom-right-radius: var(--border-radius);
+    border-right-width: 1px;
+    text-align: right;
+    white-space: nowrap;
+}
+body:has(#set-selector) #rules-table tr:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px var(--shadow-color);
+}
+body:has(#set-selector) #rules-table tr:hover td {
+    background: rgba(255, 255, 255, 0.95);
+    border-color: rgba(13, 110, 253, 0.4);
+}
+
+/* Typography inside table cards */
+body:has(#set-selector) #rules-table td:nth-child(3) { /* Rule Name */
+    color: var(--text-dark);
+    font-weight: 500;
+    font-size: 1.1rem;
+}
+
+/* Action Buttons inside table cards */
+body:has(#set-selector) #rules-table td:last-child button {
+    display: inline-flex;
+    padding: 8px 14px;
+    border-radius: 8px;
+    margin-left: 8px;
+    font-weight: 500;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: var(--transition);
+    border: 1px solid transparent;
+}
+body:has(#set-selector) #rules-table .run-button {
+    background: rgba(25, 135, 84, 0.1);
+    border-color: rgba(25, 135, 84, 0.2);
+    color: var(--accent-green);
+}
+body:has(#set-selector) #rules-table .run-button:hover {
+    background: rgba(25, 135, 84, 0.2);
+    border-color: var(--accent-green);
+    transform: scale(1.05);
+}
+body:has(#set-selector) #rules-table .edit-button {
+    background: rgba(253, 126, 20, 0.1);
+    border-color: rgba(253, 126, 20, 0.2);
+    color: var(--accent-orange);
+}
+body:has(#set-selector) #rules-table .edit-button:hover {
+    background: rgba(253, 126, 20, 0.2);
+    border-color: var(--accent-orange);
+    transform: scale(1.05);
+}
+body:has(#set-selector) #rules-table .delete-button,
+body:has(#set-selector) #rules-table .remove-from-set-button {
+    background: rgba(220, 53, 69, 0.1);
+    border-color: rgba(220, 53, 69, 0.2);
+    color: var(--accent-red);
+}
+body:has(#set-selector) #rules-table .delete-button:hover,
+body:has(#set-selector) #rules-table .remove-from-set-button:hover {
+    background: rgba(220, 53, 69, 0.2);
+    border-color: var(--accent-red);
+    transform: scale(1.05);
+}
+
+/* Bottom page actions */
+body:has(#set-selector) div[style*="text-align: right"] {
+    text-align: right;
+    margin-top: 25px;
+    padding-top: 25px;
+    border-top: 1px solid var(--border-color);
+}
+body:has(#set-selector) #run-all-rules-button {
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-pink));
+    color: var(--panel-light);
+    border: none;
+    border-radius: var(--border-radius);
+    padding: 14px 25px;
+    font-weight: 600;
+    box-shadow: 0 5px 20px rgba(13, 110, 253, 0.2);
+    transition: var(--transition);
+}
+body:has(#set-selector) #run-all-rules-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(13, 110, 253, 0.3);
+}
+/* Style for secondary action buttons in the sets page footer, like 'Activity Logs' */
+body:has(#set-selector) .page-actions a button {
+    background: var(--secondary-light);
+    border: 1px solid var(--border-color);
+    color: var(--text-dark);
+    padding: 0.8rem 1.8rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+body:has(#set-selector) .page-actions a button:hover {
+    background: var(--primary-light);
+    border-color: var(--text-muted);
+    transform: translateY(-2px);
+}
+/* Responsive adjustments for the legacy sets page table */
+@media (max-width: 992px) {
+    body:has(#set-selector) #rules-table {
+        display: block;
+    }
+    body:has(#set-selector) #rules-table tr {
+        display: block;
+        margin-bottom: 20px;
+        border-radius: var(--border-radius);
+        border: 1px solid var(--border-color);
+        background: rgba(255, 255, 255, 0.75);
+    }
+    body:has(#set-selector) #rules-table td {
+        display: block;
+        width: 100%;
+        text-align: left !important;
+        border: none;
+        padding: 8px 20px;
+        background: transparent;
+        backdrop-filter: none;
+    }
+    body:has(#set-selector) #rules-table td:first-child { border-radius: 0; }
+    body:has(#set-selector) #rules-table td:last-child { border-radius: 0; padding-bottom: 20px; text-align: center !important; }
+
+    /* Add labels back using pseudo-elements for context */
+    body:has(#set-selector) #rules-table td:nth-child(1)::before,
+    body:has(#set-selector) #rules-table td:nth-child(2)::before,
+    body:has(#set-selector) #rules-table td:nth-child(4)::before,
+    body:has(#set-selector) #rules-table td:nth-child(5)::before,
+    body:has(#set-selector) #rules-table td:nth-child(6)::before {
+        color: var(--accent-blue);
+        font-weight: 600;
+        margin-right: 10px;
+    }
+    body:has(#set-selector) #rules-table td:nth-child(1)::before { content: "#:"; }
+    body:has(#set-selector) #rules-table td:nth-child(2)::before { content: "Priority:"; }
+    body:has(#set-selector) #rules-table td:nth-child(4)::before { content: "Conditions:"; }
+    body:has(#set-selector) #rules-table td:nth-child(5)::before { content: "Action:"; }
+    body:has(#set-selector) #rules-table td:nth-child(6)::before { content: "Details:"; }
+
+    body:has(#set-selector) #rules-table td:nth-child(3) {
+        font-size: 1.2rem;
+        padding-top: 20px;
+        font-weight: 600;
+    }
+}
+
+/* --- [END OF FILE] --- */

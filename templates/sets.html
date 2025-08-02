@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Set Management - {{ current_settings.get('butler_name', 'Hydrus Butler') }}</title>
+    
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='/static/fonts/fontawesome/css/all.min.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/local-fonts.css') }}">
+
+    
+    <!-- Link to the main stylesheet for theme consistency -->
+    <link id="main-stylesheet" rel="stylesheet" href="{{ url_for('static', filename='css/' + current_settings.get('theme', 'default') + '.css') }}">
+    
+    {% if current_settings.get('background_image') and current_settings.get('background_image') != 'default' %}
+    <style>
+        body {
+            background-image: url("{{ url_for('static', filename='images/backgrounds/' + current_settings.get('background_image')) }}");
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+    </style>
+    {% endif %}
+
+    <!-- In-page styles to create the new layout for the sets page -->
+    <style>
+        /* 
+         * ===============================================
+         * STYLES FOR SETS PAGE RESTRUCTURE
+         * These styles create the modern, organized layout
+         * for the Set Management page, inspired by your example.
+         * They can be moved to a theme CSS file later.
+         * ===============================================
+        */
+
+        /* --- Main Container & Header --- */
+        .sets-page-container {
+            width: 100%;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header.sets-page-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color, #444);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .header-left h1 {
+            font-size: 2.2rem;
+            color: var(--header-color, #fff);
+            margin: 0;
+        }
+
+        /* The status indicator is styled by the main theme CSS, but we can ensure alignment */
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            background-color: var(--card-bg-color, rgba(0,0,0,0.2));
+        }
+
+        .header-content nav {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .header-content nav button {
+            background-color: var(--secondary-button-bg, #333);
+            color: var(--button-text-color, #fff);
+            border: 1px solid var(--border-color, #444);
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+            font-weight: 500;
+        }
+
+        .header-content nav button:hover {
+            background-color: var(--secondary-button-hover-bg, #444);
+            transform: translateY(-2px);
+        }
+
+        /* --- Set Controls Section --- */
+        .set-controls {
+            background-color: var(--card-bg-color, rgba(0,0,0,0.2));
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            border: 1px solid var(--border-color, #444);
+        }
+        
+        #set-selector {
+            flex: 1; /* Makes the dropdown take available space */
+            min-width: 250px;
+            padding: 0.8rem;
+            border-radius: 8px;
+            background-color: var(--input-bg-color, #222);
+            color: var(--text-color, #fff);
+            border: 1px solid var(--border-color, #555);
+            font-size: 1rem;
+        }
+        
+        .set-controls button {
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .set-controls button:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+        }
+
+        #edit-current-set-btn {
+            background-color: #00cec9; /* Teal */
+            color: #111;
+        }
+        #delete-current-set-btn {
+            background-color: #ff6b6b; /* Red */
+            color: #fff;
+        }
+        #add-new-set-btn {
+            background-color: #6c5ce7; /* Purple */
+            color: #fff;
+        }
+
+        /* --- Main Content Area --- */
+        main.sets-main-content {
+            background-color: var(--card-bg-color, rgba(0,0,0,0.1));
+            padding: 2rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-color, #444);
+        }
+
+        .main-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color, #444);
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        #current-set-name-display {
+            font-size: 1.8rem;
+            color: var(--accent-color, #00cec9);
+            margin: 0;
+        }
+
+        .main-header-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        /* These are the '+' and '++' buttons */
+        #add-rule-to-set-btn, #add-multiple-rules-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: none;
+            font-size: 1.8rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+        }
+        #add-rule-to-set-btn {
+            background-color: #6c5ce7; /* Purple */
+            color: white;
+        }
+        #add-rule-to-set-btn:hover, #add-multiple-rules-btn:hover {
+            transform: scale(1.1);
+        }
+        #add-multiple-rules-btn {
+            background-color: #00cec9; /* Teal */
+            color: #111;
+        }
+        
+        /* The container for the rule cards grid */
+        #rules-card-container {
+            display: grid;
+            /* This creates the responsive 3-column grid layout */
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        /* Message styling */
+        #no-rules-message, #offline-message {
+            text-align: center;
+            padding: 3rem 1rem;
+            background: rgba(0,0,0,0.2);
+            border-radius: 8px;
+            font-style: italic;
+        }
+
+        /* --- Page Actions & Footer --- */
+        .page-actions {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color, #444);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        #run-all-rules-button {
+            background-color: #1dd1a1; /* Green */
+            color: #111;
+            padding: 0.8rem 1.8rem;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        #run-all-rules-button:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            color: var(--subtle-text-color, #888);
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="sets-page-container">
+        <header class="sets-page-header">
+            <div class="header-content">
+                <div class="header-left">
+                    <h1>Set Management</h1>
+                    <div class="status-indicator">
+                        <div class="status-dot"></div>
+                        <span class="status-text">Connecting...</span>
+                    </div>
+                </div>
+                
+                <nav>
+                    <a href="{{ url_for('views.index') }}"><button><i class="fas fa-home"></i> Main Page</button></a>
+                    <a href="{{ url_for('views.settings_page') }}"><button><i class="fas fa-cog"></i> Settings</button></a>
+					<button id="update-services-button"><i class="fas fa-sync-alt"></i> Refresh Services</button>
+                </nav>
+            </div>
+        </header>
+        
+        <section class="set-controls">
+            <select id="set-selector" name="set-selector">
+                <option value="">Select a Set to manage...</option>
+                <!-- Options populated by sets_page.js -->
+            </select>
+            <button id="edit-current-set-btn" title="Edit the currently selected set"><i class="fas fa-edit"></i> Edit Set</button>
+            <button id="delete-current-set-btn" title="Permanently delete the selected set"><i class="fas fa-trash"></i> Delete Set</button>
+            <button id="add-new-set-btn" title="Create a new set"><i class="fas fa-plus"></i> Add New Set</button>
+        </section>
+        
+        <main class="sets-main-content">
+            <div class="main-header">
+                <h2 id="current-set-name-display">No Set Selected</h2>
+                <div class="main-header-actions">
+                     <button id="add-rule-to-set-btn" title="Add New Rule to This Set">+</button>
+                     <button id="add-multiple-rules-btn" title="Add Multiple Copies of a New Rule to This Set">++</button>
+                </div>
+            </div>
+
+            
+            <div id="rules-table-container">
+                <!-- Message shown when no rules are in the current set -->
+                <p id="no-rules-message" style="display: none;">This set is empty. Click the '+' button to add a new rule.</p>
+
+                <!-- Message shown when the app cannot connect to Hydrus -->
+                <p id="offline-message" style="display: none;">
+                    Hydrus is offline. <a href="{{ url_for('views.settings_page') }}">Check your settings</a> or <a href="#" id="retry-connection-link">Retry Connection</a>.
+                </p>
+
+                <!-- This container will be populated with rule cards by rules_ui.js -->
+                <div id="rules-card-container">
+                    <!-- Rule cards are dynamically inserted here -->
+                </div>
+            </div>
+            
+            <div class="page-actions">
+                <button id="run-all-rules-button"><i class="fas fa-play-circle"></i> Run All Rules in Set</button>
+                <a href="{{ url_for('views.logs_page_route') }}"><button class="header-content nav button"><i class="fas fa-history"></i> Activity Logs</button></a>
+            </div>
+        </main>
+        
+        <footer>
+            <p>Kept in order by {{ current_settings.get('butler_name', 'Hydrus Butler') }} © 2025</p>
+        </footer>
+    </div>
+    
+    {# Include shared modals for rule/set editing and run summaries #}
+    {% include '_modals.html' %}
+    
+    {# The main script for this page's functionality #}
+    <script type="module" src="{{ url_for('static', filename='js/sets_page.js') }}"></script>
+</body>
+</html>

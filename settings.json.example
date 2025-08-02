@@ -1,0 +1,33 @@
+{
+    "rule_interval_seconds": 0,
+    "last_viewed_threshold_seconds": 0,
+    "secret_key": "edcc9dfc43a14c5c8271e3671b02e189a641961c1259525d",
+    "show_run_notifications": true,
+    "show_run_all_notifications": true,
+    "show_run_summary_notifications": true,
+    "show_run_all_summary_notifications": true,
+    "theme": "Default",
+    "available_themes": [
+        "Default",
+        "Ethereal",
+        "Neon",
+        "Transparent"
+    ],
+    "background_image": "default",
+    "available_backgrounds": [
+        "Cherry Blossom.jpg",
+        "Light Trails.jpg",
+        "Milky Way.jpg",
+        "Steamy Mountain.jpg",
+        "plexus.jpg"
+    ],
+    "butler_name": "Hydrus Automate",
+    "log_overridden_actions": false,
+    "force_in_run_on_startup": true,
+    "force_in_run_on_all_local": false,
+    "force_in_periodic_run_frequency": 0,
+    "enable_log_pruning": true,
+    "hydrus_api_url": "http://localhost:45869",
+    "hydrus_api_key": "76d0698b2c77d400dd1b2a9e2c2eded2744a139cbb3da4ac84ea743296ad644c",
+    "log_pruning_threshold_days": 30
+}

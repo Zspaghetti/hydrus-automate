@@ -1,0 +1,198 @@
+{#
+This file contains shared modal dialog structures used across multiple pages.
+It is included via Jinja2's `include` directive.
+#}
+
+<!-- 1. Add/Edit Rule Modal -->
+<!-- Note: Contains #rule-copies-section which is used on the sets page and hidden otherwise. -->
+<div id="rule-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+        <button class="close-button">×</button>
+        <h3 id="modal-title">Add New Rule</h3>
+        <form id="rule-form" data-editing-rule-id="">
+            <div>
+                <label for="rule-name">Rule Name:</label>
+                <input type="text" id="rule-name" name="rule-name">
+            </div>
+
+            <h4>Conditions (IF):</h4>
+            <div id="conditions-container"></div>
+            <button type="button" id="add-condition-button" class="add-condition-button">Add Condition</button>
+
+            <h4>Action (THEN):</h4>
+            <div>
+                <label for="action-type">Action:</label>
+                <select id="action-type" name="action-type" required>
+                    <option value="">-- Select Action --</option>
+                    <option value="add_to">Add to (File Service)</option>
+                    <option value="force_in">Force in (File Service)</option>
+                    <option value="add_tags">Add Tag(s)</option>
+                    <option value="remove_tags">Remove Tag(s)</option>
+                    <option value="modify_rating">Modify Rating</option>
+                </select>
+            </div>
+
+            <div id="destination-services-section" style="display: none;">
+                <label>Destination File Service(s):</label>
+                <div class="destination-service-row">
+                    <select name="destination-service" class="destination-service-select" id="first-destination-service-select">
+                        <option value="">-- Select Service --</option>
+                    </select>
+                </div>
+                <div id="additional-destination-services-container"></div>
+                <button type="button" id="add-destination-service-button" class="add-destination-button">Add Another Destination</button>
+            </div>
+
+            <div id="tag-action-details-section" style="display: none;">
+                <div>
+                    <label for="tag-action-service-select">Target Tag Service:</label>
+                    <select id="tag-action-service-select" name="tag-action-service-select">
+                        <option value="">-- Select Tag Service --</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="tag-action-tags-input">Tag(s):</label>
+                    <input type="text" id="tag-action-tags-input" name="tag-action-tags-input" placeholder="tag1, namespace:tag2, character:name with spaces">
+                </div>
+            </div>
+
+            <div id="modify-rating-details-section" style="display: none;">
+                <div>
+                    <label for="modify-rating-service-select">Target Rating Service:</label>
+                    <select id="modify-rating-service-select" name="modify-rating-service-select">
+                        <option value="">-- Select Rating Service --</option>
+                    </select>
+                </div>
+                <div id="modify-rating-inputs-area" class="rating-inputs-area"></div>
+            </div>
+
+            <!-- START: Force In Details Section -->
+            <div id="force-in-details-section" class="form-section" style="display: none;">
+                <h4>Force In Options</h4>
+                <div class="form-group">
+                    <label for="deep-run-mode">Check all files (Deep Run):</label>
+                    <select id="deep-run-mode" name="deep-run-mode">
+                        <option value="never">Never</option>
+                        <option value="first_run_only">On First Automated Run Only</option>
+                        <option value="every_x_runs">Every X Automated Runs</option>
+                        <option value="always">Always</option>
+                    </select>
+                </div>
+                <div id="deep-run-interval-section" class="form-group" style="display: none;">
+                    <label for="deep-run-interval-runs">Run every:</label>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <input type="number" id="deep-run-interval-runs" name="deep-run-interval-runs" min="1" value="5" style="width: 80px;">
+                        <span>automated runs</span>
+                    </div>
+                </div>
+            </div>
+            <!-- END: Force In Details Section -->
+
+            <!-- container for side-by-side layout of Priority and Copies -->
+            <div class="form-row" style="display: flex; gap: 20px; align-items: flex-end; margin-top: 1rem;">
+                <div class="form-group" style="flex: 1;">
+                    <label for="rule-priority">Priority:</label>
+                    <input type="number" id="rule-priority" name="rule-priority" value="1" min="1" required>
+                </div>
+                <!-- This section is for the sets page to add multiple copies of a rule -->
+                <div id="rule-copies-section" class="form-group" style="flex: 1; display: none;">
+                    <label for="rule-copies">Number of Copies:</label>
+                    <input type="number" id="rule-copies" name="rule-copies" value="1" min="1" style="width: 80px;">
+                </div>
+            </div>
+
+            <button type="submit">Save Rule</button>
+        </form>
+    </div>
+</div>
+
+<!-- 2. Add/Edit Set Modal -->
+<div id="set-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+        <button class="close-button">×</button>
+        <h3 id="set-modal-title">Add New Set</h3>
+        <form id="set-form" data-editing-set-id="">
+            <div>
+                <label for="set-name">Set Name:</label>
+                <input type="text" id="set-name" name="set-name" placeholder="e.g., Daily Tag Cleanup" required>
+            </div>
+
+            <h4>Execution Interval</h4>
+            <div class="set-interval-options">
+                <label for="set-execution-override">Interval Type:</label>
+                <select id="set-execution-override" name="set-execution-override">
+                    <option value="default">Use Global Default</option>
+                    <option value="custom">Custom Interval</option>
+                    <option value="none">Never Run on Schedule</option>
+                </select>
+            </div>
+            <div id="set-custom-interval-section" style="display: none;">
+                <label for="set-interval-seconds">Interval (seconds):</label>
+                <input type="number" id="set-interval-seconds" name="set-interval-seconds" min="10" placeholder="e.g., 3600">
+            </div>
+
+            <h4>Rules in this Set</h4>
+            <div id="set-rules-container"></div>
+            <button type="button" id="add-rule-to-set-button" class="add-condition-button">Add Rule</button>
+
+            <div class="modal-actions">
+                <button type="submit">Save Set</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 3. Manual Run Options Modal -->
+<div id="manual-run-options-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+        <span class="close-button">×</span>
+        <h3 id="manual-run-modal-title">Manual Run Options</h3>
+        <p id="manual-run-impact-estimate">Estimating impact...</p>
+        <div class="modal-scroll-container">
+            <ul id="manual-run-rule-list">
+                <!-- Rule items will be dynamically inserted here -->
+            </ul>
+        </div>
+        <div class="modal-actions">
+            <button id="manual-run-proceed-button" class="primary-button" disabled>Proceed</button>
+            <button id="manual-run-cancel-button" type="button" class="secondary-button">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<!-- 4. Run Summary Modal -->
+<div id="run-summary-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+        <span class="close-button">×</span>
+        <h3 id="run-summary-modal-title">Run Complete</h3>
+        <p id="run-summary-message">Summary message goes here.</p>
+        
+        <div class="informational-notes-container" style="display: none;">
+            <details>
+                <summary class="summary-with-arrow">
+                    Informational Notes
+                    <span class="arrow-down">▼</span>
+                </summary>
+                <ul id="run-summary-notes-list">
+                    <!-- Informational notes will be dynamically inserted here -->
+                </ul>
+            </details>
+        </div>
+
+        <div class="modal-actions">
+            <button id="run-summary-ok-button" type="button" class="primary-button">OK</button>
+        </div>
+    </div>
+</div>
+
+<!-- 5. Generic Confirmation/Message Modal -->
+<div id="confirmation-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+        <span class="close-button">×</span>
+        <h3 id="confirmation-modal-title">Confirmation</h3>
+        <p id="confirmation-modal-message">Your action was successful.</p>
+        <div class="modal-actions">
+            <button id="confirmation-modal-ok-button" type="button" class="primary-button">OK</button>
+        </div>
+    </div>
+</div>

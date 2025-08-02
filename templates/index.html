@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    {# --- MODIFICATION: Dynamic Title (Modern Theme) --- #}
+    <!-- The page title is dynamically set by the Flask/Jinja2 backend. -->
+    <title>{{ current_settings.get('butler_name', 'Hydrus Automate') }} | Rules</title>
+    
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='/static/fonts/fontawesome/css/all.min.css') }}">
+    
+    <!-- Google Fonts for a modern look -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='/static/css/local-fonts.css') }}">
+    
+    <!-- Link to the application's stylesheet. The theme is selected on the settings page. -->
+    <link id="main-stylesheet" rel="stylesheet" href="{{ url_for('static', filename='css/' + current_settings.get('theme', 'default') + '.css') }}">
+    
+    <!-- Fix for long rule names in card header -->
+    <style>
+        /*
+         * This block fixes a layout issue where a long rule name in the rule card
+         * header can push the 'Run' button out of view.
+         */
+        .rule-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.5rem; 
+        }
+
+        .rule-header-info {
+            flex: 1; 
+            min-width: 0; /* Crucial for allowing the element to shrink below its content's width */
+        }
+
+        .rule-name {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .run-btn-collapsed {
+            flex-shrink: 0; /* Ensures the button never gets squashed */
+        }
+    </style>
+    <!-- END fix -->
+
+    {% if current_settings.get('background_image') and current_settings.get('background_image') != 'default' %}
+    <style>
+        body {
+            background-image: url("{{ url_for('static', filename='images/backgrounds/' + current_settings.get('background_image')) }}");
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+    </style>
+    {% endif %}
+</head>
+<body>
+    <!-- Moonlight decorative elements -->
+    <div class="moonlight-decoration decoration-1"></div>
+    <div class="moonlight-decoration decoration-2"></div>
+    <div class="moonlight-decoration decoration-3"></div>
+
+    <div class="app-container">
+        <!-- ==== SETS SIDEBAR ==== -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>Sets</h2>
+            </div>
+            
+            <!-- This container will be populated by sets_ui.js using sets_ui_adapters.js -->
+            <div id="sets-list-container" class="sets-container">
+                <!-- Set cards will be inserted here by JavaScript -->
+            </div>
+            
+            <div class="sidebar-footer">
+                <!-- The ID is used by sets_ui.js to open the set modal -->
+                <button id="hb-add-set-btn" class="add-set-btn"><i class="fas fa-plus"></i> Add Set</button>
+            </div>
+        </div>
+        
+        <!-- ==== MAIN CONTENT AREA ==== -->
+        <div class="main-content">
+            <div class="main-header">
+                <div class="header-left">
+                    <h1 id="main-header-title" class="set-title">Loading Rules...</h1>
+                    <div class="status-indicator">
+                        <div class="status-dot"></div>
+                        <!-- This span is targeted by the ModernMainAdapter to show status text -->
+                        <span class="status-text">Connecting...</span>
+                    </div>
+                </div>
+                
+                <div class="header-actions">
+                    {# --- MODIFICATION: Functional Header Buttons --- #}
+                    <!-- These buttons are now functional links using Flask's url_for -->
+                    <a href="{{ url_for('views.settings_page') }}" class="header-btn-link"><button class="header-btn"><i class="fas fa-cog"></i> Settings</button></a>
+                    <a href="{{ url_for('views.logs_page_route') }}" class="header-btn-link"><button class="header-btn"><i class="fas fa-history"></i> Activity Logs</button></a>
+                    
+                    <!-- This button's ID is used by main.js for the retry/refresh action -->
+                    <button id="update-services-button" class="header-btn"><i class="fas fa-sync-alt"></i> Refresh Services</button>
+                </div>
+            </div>
+            
+            <div id="rules-table-container" class="rules-container">
+                <!-- Message displayed when no rules are defined. Handled by JS. -->
+                <p id="no-rules-message" style="display: none; text-align: center; padding: 2rem;">No rules defined for this view.</p>
+
+                <!-- Message displayed when the app cannot connect to Hydrus. Handled by JS. -->
+                <p id="offline-message" style="display: none; text-align: center; padding: 2rem;">
+                    Set your API key on the <a href="{{ url_for('views.settings_page') }}">settings page</a> or <a href="#" id="retry-connection-link">Retry Connection</a>.
+                </p>
+                
+                <!-- This container will be populated by rules_ui.js using the ModernRuleAdapter -->
+                <div id="rules-card-container" class="rules-grid">
+                    <!-- Rule cards and the 'Add Rule' card will be inserted here by JavaScript -->
+                </div>
+            </div>
+
+            <div class="run-all-container">
+                 <!-- This ID is used by main.js and the Main Adapter to handle the "Run" action -->
+                <button id="run-all-rules-button" class="run-all-btn">
+                    <i class="fas fa-bolt"></i>
+                    <!-- This span is targeted by the ModernMainAdapter to change the button text -->
+                    <span>Run All Rules</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    {# --- MODIFICATION: Include shared modals --- #}
+    <!-- All modals (for rules, sets, summaries) are included from a shared file. -->
+    {% include '_modals.html' %}
+    
+    {# --- Main Application Script --- #}
+    <!-- The main.js script is the entry point and handles importing all other necessary modules. -->
+    <script type="module" src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

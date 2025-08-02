@@ -1,0 +1,1085 @@
+/* --- Transparent Glass Theme for Hydrus Butler --- */
+
+/* 
+ * This theme uses semi-transparent panels to create a modern, elegant UI
+ * that showcases the selected background image. Key features include
+ * high-contrast panels, a clean layout, and a vibrant accent color for interactivity.
+ */
+
+/* =============================================
+   1. GLOBAL STYLES & CSS VARIABLES
+   ============================================= */
+:root {
+    /* Color Palette */
+    --panel-bg-color: rgba(20, 25, 40, 0.7);      /* The main semi-transparent panel color */
+    --panel-bg-hover: rgba(30, 35, 55, 0.8);     /* Lighter on hover */
+    --panel-bg-active: rgba(40, 45, 70, 0.9);    /* Even lighter for active/selected items */
+    --text-color: #e0e6f0;                       /* Main text color - slightly off-white */
+    --text-color-muted: #a0a8b8;                 /* For descriptions and secondary text */
+    --accent-color: #3d8bff;                     /* A vibrant blue for highlights and actions */
+    --accent-color-hover: #5da0ff;               /* Lighter blue for hover states */
+    --border-color: rgba(255, 255, 255, 0.15);    /* Subtle border to define panel edges */
+    --status-online: #4caf50;                    /* Green for 'Connected' status */
+    --status-offline: #f44336;                   /* Red for 'Offline' status */
+    --shadow-color: rgba(0, 0, 0, 0.2);          /* Soft shadow for depth */
+
+    /* Typography & Sizing */
+    --font-family: 'Poppins', sans-serif;
+    --border-radius-main: 12px;
+    --border-radius-small: 8px;
+}
+
+/* Base setup for the entire page */
+html, body {
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-family);
+    color: var(--text-color);
+    background-color: #0d1117; /* Fallback for when no image is set */
+    height: 100%;
+    width: 100%;
+    overflow-x: hidden;
+}
+
+/* Custom Scrollbar Styling */
+::-webkit-scrollbar {
+    width: 10px;
+}
+::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+}
+::-webkit-scrollbar-thumb {
+    background: var(--accent-color);
+    border-radius: 10px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-color-hover);
+}
+
+/* =============================================
+   2. MAIN LAYOUT (index.html & settings.html)
+   ============================================= */
+
+/* Main application container */
+.app-container, .settings-layout {
+    display: flex;
+    height: 100vh;
+    padding: 1.5rem;
+    box-sizing: border-box;
+    gap: 1.5rem;
+}
+
+/* Sidebar for Sets (index.html) */
+.sidebar {
+    flex: 0 0 280px;
+    display: flex;
+    flex-direction: column;
+    background: var(--panel-bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-main);
+    padding: 1rem;
+    box-shadow: 0 8px 32px 0 var(--shadow-color);
+    overflow: hidden;
+}
+
+.sidebar-header h2 {
+    margin: 0 0 1rem 0;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 1.5rem;
+    text-align: center;
+}
+
+.sets-container {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding-right: 5px; /* space for scrollbar */
+}
+
+/* Main Content Area (index.html) */
+.main-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    overflow: hidden; /* Prevent content overflow */
+}
+
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background: var(--panel-bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-main);
+    box-shadow: 0 8px 32px 0 var(--shadow-color);
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.main-header h1 {
+    margin: 0;
+    font-size: 1.8rem;
+}
+
+.rules-container {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+.rules-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1rem;
+}
+
+/* =============================================
+   3. CARDS (Sets & Rules)
+   ============================================= */
+.set-card, .rule-card {
+    background: var(--panel-bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-main);
+    box-shadow: 0 4px 15px 0 var(--shadow-color);
+    transition: all 0.3s ease;
+    overflow: hidden; /* Important for child element rounding */
+}
+
+.set-card:hover, .rule-card:hover:not(.add-rule-card) {
+    transform: translateY(-5px);
+    background: var(--panel-bg-hover);
+    border-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 30px 0 var(--shadow-color);
+}
+
+.set-card {
+    padding: 1rem;
+    cursor: pointer;
+}
+
+.set-card.active {
+    background: var(--panel-bg-active);
+    border-color: var(--accent-color);
+    box-shadow: 0 0 15px rgba(61, 139, 255, 0.4);
+}
+
+.set-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.set-name {
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.set-timing {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.8rem;
+    color: var(--text-color-muted);
+}
+
+.set-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.rule-count {
+    font-size: 0.9rem;
+    color: var(--text-color-muted);
+}
+
+/* Rule Card Specifics */
+.rule-card-header {
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.rule-name {
+    font-size: 1.1em;
+    font-weight: 600;
+}
+
+.rule-priority {
+    font-size: 0.8em;
+    color: var(--text-color-muted);
+}
+
+.rule-card-body {
+    display: none; /* Collapsed by default */
+    padding: 1rem;
+    font-size: 0.9rem;
+}
+
+.rule-card.expanded > .rule-card-body {
+    display: grid; /* Replaced 'block' with 'grid' */
+    grid-template-columns: 1fr auto; /* Left column takes space, right column fits content */
+    grid-template-rows: auto auto;    /* Define two rows for content */
+    align-items: end;                 /* Align grid items to the bottom */
+    gap: 0.5rem 1rem;                 /* Add spacing between grid items */
+    min-height: 90px;                 /* Ensure a minimum height for a good look */
+    padding: 1rem;                    /* Reset padding to ensure it's consistent */
+}
+
+.pane-title {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--text-color);
+}
+
+.conditions-list, .action-details-list {
+    list-style-type: none;
+    padding-left: 1rem;
+    margin: 0;
+}
+.conditions-list li, .action-details-list li {
+    position: relative;
+    padding-left: 15px;
+    margin-bottom: 4px;
+}
+.conditions-list li::before, .action-details-list li::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: var(--accent-color);
+}
+
+.rule-action-pane {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.action-icon {
+    font-size: 1.5rem;
+    color: var(--accent-color);
+}
+
+.action-type {
+    font-weight: 600;
+}
+
+.rule-controls-pane {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+}
+
+/* Add New Rule Card */
+.add-rule-card {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 150px;
+    cursor: pointer;
+    border-style: dashed;
+    border-width: 2px;
+}
+
+.add-rule-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-color-muted);
+    transition: all 0.3s ease;
+}
+
+.add-rule-card:hover .add-rule-content {
+    color: var(--accent-color);
+    transform: scale(1.05);
+}
+
+.add-rule-content i {
+    font-size: 2.5rem;
+}
+
+/* =============================================
+   4. BUTTONS & CONTROLS
+   ============================================= */
+
+button, .header-btn, .header-btn-link button {
+    background-color: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    padding: 0.5rem 1rem;
+    border-radius: var(--border-radius-small);
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    font-family: var(--font-family);
+    font-weight: 500;
+}
+
+button:hover, .header-btn:hover, .header-btn-link button:hover {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+    color: #fff;
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: transparent !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-color-muted) !important;
+}
+
+.control-btn, .reorder-set-btn {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.9rem;
+    background: rgba(255,255,255,0.1);
+}
+
+.control-btn svg, .control-btn i, .reorder-set-btn svg {
+    pointer-events: none; /* Clicks go to the button */
+}
+
+.reorder-set-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+}
+
+.reorder-set-btn svg {
+    width: 20px;
+    height: 20px;
+}
+
+
+/* Main Run Button */
+.run-all-container {
+    padding: 1rem 1.5rem;
+    background: var(--panel-bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-main);
+    box-shadow: 0 8px 32px 0 var(--shadow-color);
+    display: flex;
+    justify-content: center;
+}
+
+.run-all-btn {
+    width: 100%;
+    max-width: 400px;
+    padding: 0.8rem 1.5rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+}
+
+.run-all-btn:hover {
+    background-color: var(--accent-color-hover);
+    border-color: var(--accent-color-hover);
+}
+
+/* =============================================
+   5. MODALS & FORMS
+   ============================================= */
+
+/* Shared Modal Styles */
+.modal {
+    background-color: rgba(0, 0, 0, 0.7); /* Darker overlay */
+}
+
+.modal-content {
+    background: var(--panel-bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-main);
+    box-shadow: 0 8px 32px 0 var(--shadow-color);
+    color: var(--text-color);
+    width: 90%;
+    max-width: 800px; /* Wider for complex rule editing */
+}
+
+.modal-header {
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* Form elements */
+input[type="text"], input[type="number"], select, textarea {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    padding: 0.6rem;
+    border-radius: var(--border-radius-small);
+    font-family: var(--font-family);
+    width: 100%;
+    box-sizing: border-box;
+}
+
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 5px rgba(61, 139, 255, 0.5);
+}
+
+::placeholder {
+    color: var(--text-color-muted);
+    opacity: 1;
+}
+
+.form-row, .setting-row {
+    margin-bottom: 1.25rem;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+/* Condition Rows */
+.condition-row {
+    background: rgba(0,0,0,0.2);
+    padding: 0.75rem;
+    border-radius: var(--border-radius-small);
+    border: 1px solid transparent;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.nested-condition-row {
+    margin-left: 1.5rem;
+}
+
+.remove-condition-button {
+    background: #f44336;
+    border-color: #f44336;
+    color: white;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
+    text-align: center;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.remove-condition-button:hover {
+    background: #d32f2f;
+    border-color: #d32f2f;
+}
+
+/* =============================================
+   6. SETTINGS PAGE (settings.html)
+   ============================================= */
+header {
+    padding: 1rem 1.5rem;
+    background: var(--panel-bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-main);
+    box-shadow: 0 8px 32px 0 var(--shadow-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 1.5rem;
+}
+
+main.settings-layout {
+    margin: 0 1.5rem 1.5rem 1.5rem;
+    height: auto;
+    padding: 0;
+}
+
+/* Settings Side Menu */
+.side-menu {
+    flex: 0 0 250px;
+    background: var(--panel-bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-main);
+    padding: 1rem;
+    box-shadow: 0 8px 32px 0 var(--shadow-color);
+}
+
+.side-menu-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.side-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.8rem 1rem;
+    border-radius: var(--border-radius-small);
+    text-decoration: none;
+    color: var(--text-color);
+    transition: background-color 0.2s ease;
+}
+
+.side-menu-item:hover {
+    background-color: var(--panel-bg-hover);
+}
+
+.side-menu-item.active {
+    background-color: var(--accent-color);
+    color: white;
+    font-weight: 600;
+}
+
+/* Settings Content Panel */
+.settings-content {
+    flex-grow: 1;
+    background: var(--panel-bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-main);
+    padding: 1.5rem 2rem;
+    box-shadow: 0 8px 32px 0 var(--shadow-color);
+    overflow-y: auto;
+}
+
+.settings-header {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.save-settings-button {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+    color: white;
+    padding: 0.7rem 1.5rem;
+    font-weight: 600;
+}
+.save-settings-button:hover {
+    background-color: var(--accent-color-hover);
+    border-color: var(--accent-color-hover);
+}
+
+.settings-panel {
+    display: none; /* Hidden by default, JS makes it active */
+}
+.settings-panel.active {
+    display: block;
+}
+
+.setting-description {
+    font-size: 0.85rem;
+    color: var(--text-color-muted);
+    margin-top: 0.5rem;
+}
+
+.note {
+    background: rgba(255, 193, 7, 0.1);
+    border-left: 4px solid #ffc107;
+    padding: 1rem;
+    border-radius: var(--border-radius-small);
+    margin-bottom: 1rem;
+}
+
+.note p, .note li {
+    color: #ffd54f;
+}
+
+/* =============================================
+   7. MISCELLANEOUS & UTILITIES
+   ============================================= */
+
+/* Status Indicator */
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(0,0,0,0.3);
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+}
+
+.status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #9e9e9e; /* Default/connecting color */
+}
+
+/* Added rule for the icon on the sets page */
+.status-indicator i.fas.fa-circle {
+    color: #9e9e9e; /* Default/connecting color for the icon */
+    font-size: 10px; /* Match the size of the div dot */
+    line-height: 1; /* Ensure consistent vertical alignment */
+    vertical-align: middle;
+}
+.status-online .status-dot {
+    background-color: var(--status-online);
+    box-shadow: 0 0 5px var(--status-online);
+}
+
+/* Added rule for the icon's online state */
+.status-online i.fas.fa-circle {
+    color: var(--status-online);
+    text-shadow: 0 0 5px var(--status-online);
+}
+
+.status-offline .status-dot {
+    background-color: var(--status-offline);
+    box-shadow: 0 0 5px var(--status-offline);
+}
+
+/* Added rule for the icon's offline state */
+.status-offline i.fas.fa-circle {
+    color: var(--status-offline);
+    text-shadow: 0 0 5px var(--status-offline);
+}
+/* Hide decorative elements by default, can be used for specific themes */
+.moonlight-decoration {
+    display: none;
+}
+
+/* Link Styling */
+a {
+    color: var(--accent-color);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+a:hover {
+    color: var(--accent-color-hover);
+    text-decoration: underline;
+}
+
+/* Center messages */
+#no-rules-message, #offline-message {
+    padding: 2rem;
+    background: rgba(0,0,0,0.2);
+    border-radius: var(--border-radius-small);
+    text-align: center;
+    color: var(--text-color-muted);
+}
+
+/* =============================================
+   8. LOGS & SETS PAGE STYLES (Part 2)
+   ============================================= */
+
+/* General Layout for Logs & Sets pages */
+main {
+    padding: 0 1.5rem 1.5rem 1.5rem;
+    box-sizing: border-box;
+}
+
+/* Glass Panel Wrapper for Sections */
+#lookup-section,
+#log-statistics-section,
+#detailed-logs-section,
+.set-controls {
+    background: var(--panel-bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-main);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 8px 32px 0 var(--shadow-color);
+}
+
+#detailed-logs-section h2 {
+    margin-top: 0;
+}
+
+.top-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    align-items: start;
+}
+
+@media (max-width: 1200px) {
+    .top-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+hr {
+    border: none;
+    height: 1px;
+    background-color: var(--border-color);
+    margin: 2rem 0;
+}
+
+
+/* =============================================
+   9. LOGS PAGE - SPECIFIC STYLING
+   ============================================= */
+
+/* Form Grids & Controls */
+.lookup-controls, .filters-container {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+
+.log-search-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.form-actions {
+    margin-top: 1rem;
+    display: flex;
+    gap: 0.5rem;
+}
+
+.secondary-button {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.secondary-button:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-color: var(--border-color);
+    color: var(--text-color);
+}
+
+/* Lookup Results & Timeline */
+.lookup-results {
+    margin-top: 1rem;
+}
+
+.lookup-grid {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.5rem 1rem;
+    align-items: start;
+}
+
+.lookup-grid strong {
+    color: var(--text-color-muted);
+}
+
+.lookup-grid ul {
+    margin: 0;
+    padding-left: 1.2rem;
+}
+
+details {
+    margin-top: 0.5rem;
+}
+
+summary {
+    cursor: pointer;
+    font-weight: 500;
+    color: var(--accent-color);
+    display: inline-block;
+}
+
+summary:hover {
+    color: var(--accent-color-hover);
+}
+
+.modern-timeline {
+    border-left: 2px solid var(--border-color);
+    padding-left: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.modern-timeline-item {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.modern-timeline-item:last-child {
+    margin-bottom: 0;
+}
+
+.modern-timeline-item .timeline-icon {
+    position: absolute;
+    left: -2.5rem;
+    top: 0;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--panel-bg-hover);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+}
+
+.modern-timeline-item.status-success .timeline-icon { color: var(--status-online); }
+.modern-timeline-item.status-failure .timeline-icon { color: var(--status-offline); }
+
+.timeline-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.25rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.timeline-title {
+    font-weight: 600;
+}
+
+.timeline-time {
+    font-size: 0.8rem;
+    color: var(--text-color-muted);
+}
+
+.timeline-message {
+    margin: 0;
+}
+
+/* Chart */
+.chart-container {
+    position: relative;
+    height: 300px;
+    width: 100%;
+}
+
+/* Detailed Logs Table & Rule Intervals Table */
+.table-responsive {
+    overflow-x: auto;
+}
+
+#detailed-logs-table, .rule-interval-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+#detailed-logs-table th, #detailed-logs-table td,
+.rule-interval-table th, .rule-interval-table td {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+    vertical-align: middle;
+}
+
+#detailed-logs-table thead, .rule-interval-table thead {
+    background: rgba(0,0,0,0.2);
+}
+
+#detailed-logs-table th, .rule-interval-table th {
+    font-weight: 600;
+}
+
+#detailed-logs-table tbody tr:hover, .rule-interval-row:hover {
+    background-color: var(--panel-bg-hover);
+}
+
+.clickable-cell {
+    cursor: pointer;
+    color: var(--accent-color);
+    font-weight: 500;
+}
+
+.clickable-cell:hover {
+    text-decoration: underline;
+    color: var(--accent-color-hover);
+}
+
+#detailed-logs-table .status-success { color: var(--status-online); font-weight: 500; }
+#detailed-logs-table .status-failure { color: var(--status-offline); font-weight: 500; }
+
+.pagination-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+}
+
+.results-summary {
+    margin-top: 1rem;
+    font-style: italic;
+    color: var(--text-color-muted);
+}
+
+
+/* =============================================
+   10. SETS PAGE - SPECIFIC STYLING
+   ============================================= */
+
+/* Custom Side Menu on sets.html */
+.hb-side-menu {
+    position: fixed;
+    top: 0;
+    left: -280px; /* Initially hidden */
+    width: 280px;
+    height: 100%;
+    background: var(--panel-bg-color);
+    border-right: 1px solid var(--border-color);
+    box-shadow: 5px 0 35px var(--shadow-color);
+    transition: left 0.3s ease-in-out;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+}
+
+.hb-side-menu.expanded {
+    left: 0;
+}
+
+.hb-hover-area {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 20px;
+    height: 100%;
+    z-index: 998;
+}
+
+.hb-arrow {
+    position: fixed;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    width: 25px;
+    height: 50px;
+    background: var(--accent-color);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0 8px 8px 0;
+    cursor: pointer;
+    z-index: 999;
+    opacity: 0;
+    transition: opacity 0.3s, background-color 0.2s;
+}
+
+.hb-arrow.visible {
+    opacity: 1;
+}
+
+.hb-arrow:hover {
+    background: var(--accent-color-hover);
+}
+
+.hb-main-container {
+    transition: margin-left 0.3s ease-in-out, width 0.3s ease-in-out;
+    width: 100%;
+}
+
+.hb-menu-header h2 {
+    text-align: center;
+    padding: 1rem;
+    margin: 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.hb-menu-main-link {
+    padding: 1rem;
+    text-align: center;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.hb-menu-main-link a {
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.hb-sets-container {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.hb-menu-footer {
+    padding: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.hb-add-set-btn {
+    width: 100%;
+    background: var(--accent-color);
+    border-color: var(--accent-color);
+    color: white;
+    font-weight: 600;
+}
+
+.hb-add-set-btn:hover {
+    background: var(--accent-color-hover);
+    border-color: var(--accent-color-hover);
+}
+
+/* Floating Action Buttons */
+.add-button, .add-button-alt {
+    position: fixed;
+    bottom: 3rem;
+    right: 3rem;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--accent-color);
+    color: white;
+    font-size: 2rem;
+    line-height: 50px;
+    text-align: center;
+    border: none;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    z-index: 900;
+    padding: 0;
+    transition: all 0.2s ease;
+}
+
+.add-button:hover, .add-button-alt:hover {
+    background: var(--accent-color-hover);
+    transform: scale(1.1);
+}
+
+.add-button-alt {
+    right: 7.5rem; /* position next to the first button */
+    background: rgba(255, 255, 255, 0.2);
+    font-size: 1.5rem;
+}
+.add-button-alt:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Offline message box */
+.hb-offline-message-box {
+    background: rgba(244, 67, 54, 0.2);
+    border: 1px solid var(--status-offline);
+    border-radius: var(--border-radius-main);
+    padding: 1.5rem;
+    color: #ffcdd2;
+}
+
+.hb-offline-message-box h2 {
+    color: white;
+    margin-top: 0;
+}
+.hb-offline-message-box a {
+    color: #ffcdd2;
+    font-weight: bold;
+}
