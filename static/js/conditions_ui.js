@@ -226,8 +226,6 @@ export function addConditionRow(parentContainer, conditionData = {}) {
             const operatorSelect = document.createElement('select');
             operatorSelect.name = 'boolean-operator'; // This will hold 'inbox', 'archive', etc.
 
-            // This list contains the "stem" of the Hydrus predicate.
-            // The text is user-friendly. The value is used in the backend.
             const booleanOperators = [
                 { value: 'inbox', text: 'Is in Inbox' },
                 { value: 'archive', text: 'Is Archived' },
@@ -243,7 +241,6 @@ export function addConditionRow(parentContainer, conditionData = {}) {
                 { value: 'has_transparency', text: 'Has Transparency' },
                 { value: 'has_duration', text: 'Has Duration' },
                 { value: 'is_the_best_quality_file_of_its_duplicate_group', text: 'Is Best Quality Duplicate' }, // Note: long value
-                { value: 'filetype_forced', text: 'Filetype Is Forced' }
             ];
             populateSelectElement(operatorSelect, booleanOperators, '-- Select Flag --', data.operator);
             optionsArea.appendChild(operatorSelect);
@@ -260,6 +257,24 @@ export function addConditionRow(parentContainer, conditionData = {}) {
             populateSelectElement(valueSelect, booleanValues, '-- Select State --', initialValueString);
             optionsArea.appendChild(valueSelect);
             valueSelect.setAttribute('required', 'required');
+
+            function updateBooleanValueSelectState() {
+                const selectedOp = operatorSelect.value;
+                const nonNegatableOps = ['inbox', 'archive', 'deleted'];
+                const isFalseOption = valueSelect.querySelector('option[value="false"]');
+
+                if (nonNegatableOps.includes(selectedOp)) {
+                    isFalseOption.disabled = true;
+                    if (valueSelect.value === 'false') {
+                        valueSelect.value = 'true';
+                    }
+                } else {
+                    isFalseOption.disabled = false;
+                }
+            }
+
+            operatorSelect.addEventListener('change', updateBooleanValueSelectState);
+            updateBooleanValueSelectState(); // Initial call to set state on render
 
         } else if (selectedType === 'url') {
             const subtypeSelect = document.createElement('select');

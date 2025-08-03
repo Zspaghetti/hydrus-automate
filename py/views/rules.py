@@ -225,6 +225,7 @@ def run_single_rule_route(rule_id_from_path):
         exec_result = execute_single_rule(
             app_config=current_app.config, db_conn=db_conn, rule=rule_to_run,
             current_run_id=parent_run_id, execution_order_in_run=1,
+            is_manual_run=True,
             override_bypass_list=override_bypass_list, deep_run_list=deep_run_list
         )
     except Exception as e:
@@ -324,4 +325,5 @@ def save_rule_intervals_route():
         if db_conn: db_conn.rollback()
         return jsonify({"success": False, "message": f"An error occurred while saving intervals: {e}"}), 500
     finally:
+
         if db_conn: db_conn.close()

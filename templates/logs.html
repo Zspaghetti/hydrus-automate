@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Activity Logs - {{ current_settings.get('butler_name', 'Hydrus Butler') }}</title>
     <link id="main-stylesheet" rel="stylesheet" href="{{ url_for('static', filename='css/' + current_settings.get('theme', 'default') + '.css') }}">
-    <script src="{{ url_for('static', filename='/static/fonts/vendor/chart.js') }}"></script>
+    <script src="{{ url_for('static', filename='fonts/vendor/chart.js') }}"></script>
     {% if current_settings.get('background_image') and current_settings.get('background_image') != 'default' %}
     <style>
         body {

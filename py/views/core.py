@@ -152,8 +152,7 @@ def handle_save_settings():
         'theme': request.form.get('theme', 'default'),
         'background_image': request.form.get('background_image', 'default'),
         'butler_name': request.form.get('butler_name', 'Hydrus Butler').strip(),
-        'enable_log_pruning': 'enable_log_pruning' in request.form,
-        'log_pruning_threshold_days': request.form.get('log_pruning_threshold_days', 30, type=int)
+        'enable_log_pruning': 'enable_log_pruning' in request.form
     }
     current_app.logger.info(f"Processed form data for save: {submitted_data}")
 
@@ -238,3 +237,5 @@ def retry_hydrus_connection():
     return get_hydrus_status()
     
     
+
+

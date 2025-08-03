@@ -13,7 +13,7 @@ and a refactored, component-based structure.
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('/static/fonts/RobotoMono/RobotoMono-Regular.woff2') format('woff2');
+  src: url('../fonts/RobotoMono/RobotoMono-Regular.woff2') format('woff2');
 }
 
 /* Medium (Weight 500) */
@@ -22,7 +22,7 @@ and a refactored, component-based structure.
   font-style: normal;
   font-weight: 500;
   font-display: swap;
-  src: url('/static/fonts/RobotoMono/RobotoMono-Medium.woff2') format('woff2');
+  src: url('../fonts/RobotoMono/RobotoMono-Medium.woff2') format('woff2');
 }
 
 /* SemiBold (Weight 600) */
@@ -31,7 +31,7 @@ and a refactored, component-based structure.
   font-style: normal;
   font-weight: 600;
   font-display: swap;
-  src: url('/static/fonts/RobotoMono/RobotoMono-SemiBold.woff2') format('woff2');
+  src: url('../fonts/RobotoMono/RobotoMono-SemiBold.woff2') format('woff2');
 }
 
 /* Bold (Weight 700) */
@@ -40,7 +40,7 @@ and a refactored, component-based structure.
   font-style: normal;
   font-weight: 700;
   font-display: swap;
-  src: url('/static/fonts/RobotoMono/RobotoMono-Bold.woff2') format('woff2');
+  src: url('../fonts/RobotoMono/RobotoMono-Bold.woff2') format('woff2');
 }
 
 

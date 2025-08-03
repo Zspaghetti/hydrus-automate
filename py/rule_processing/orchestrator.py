@@ -177,7 +177,9 @@ def execute_single_rule(app_config, db_conn, rule, current_run_id, execution_ord
     try:
         # --- 1. PREPARATION AND LOGGING ---
         start_run_log(db_conn, ctx.rule_execution_id, ctx.run_id, ctx.rule, execution_order_in_run)
-        
+        # --- FIX: Commit the initial log entry immediately to release the database lock ---
+        db_conn.commit()
+
         # Ensure services are loaded and attach to context for other modules to use
         ctx.available_services = actions.ensure_services_are_loaded(ctx)
         if not ctx.available_services:
@@ -343,7 +345,6 @@ def execute_single_rule(app_config, db_conn, rule, current_run_id, execution_ord
         logger.info(f"{log_prefix}: {final_summary_message_str}")
 
     except Exception as main_exc:
-        db_conn.rollback()
         overall_rule_success_flag = False
         final_summary_message_str = str(main_exc)
         logger.error(f"{log_prefix}: CRITICAL EXCEPTION: {final_summary_message_str}", exc_info=True)
@@ -386,4 +387,5 @@ def execute_single_rule(app_config, db_conn, rule, current_run_id, execution_ord
         "files_skipped_due_to_override": final_details['files_skipped_due_to_override'],
         "files_skipped_due_to_recent_view": final_details['files_skipped_due_to_recent_view'],
         "details": final_details
+
     }

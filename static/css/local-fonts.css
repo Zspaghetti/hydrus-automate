@@ -9,26 +9,30 @@
   font-family: 'Poppins';
   font-style: normal;
   font-weight: 400; /* Regular */
-  src: url('/static/fonts/Poppins/Poppins-Regular.woff2') format('woff2');
+  /* CORRECTED PATH */
+  src: url('../fonts/Poppins/Poppins-Regular.woff2') format('woff2');
 }
 
 @font-face {
   font-family: 'Poppins';
   font-style: normal;
   font-weight: 500; /* Medium */
-  src: url('/static/fonts/Poppins/Poppins-Medium.woff2') format('woff2');
+  /* CORRECTED PATH */
+  src: url('../fonts/Poppins/Poppins-Medium.woff2') format('woff2');
 }
 
 @font-face {
   font-family: 'Poppins';
   font-style: normal;
   font-weight: 600; /* Semi-Bold */
-  src: url('/static/fonts/Poppins/Poppins-SemiBold.woff2') format('woff2');
+  /* CORRECTED PATH */
+  src: url('../fonts/Poppins/Poppins-SemiBold.woff2') format('woff2');
 }
 
 @font-face {
   font-family: 'Poppins';
   font-style: normal;
   font-weight: 700; /* Bold */
-  src: url('/static/fonts/Poppins/Poppins-Bold.woff2') format('woff2');
+  /* CORRECTED PATH */
+  src: url('../fonts/Poppins/Poppins-Bold.woff2') format('woff2');
 }
