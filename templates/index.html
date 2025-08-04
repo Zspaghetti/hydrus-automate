@@ -44,8 +44,16 @@
         .run-btn-collapsed {
             flex-shrink: 0; /* Ensures the button never gets squashed */
         }
+
+        .rule-conditions-pane.edit-trigger {
+            cursor: pointer;
+            border-radius: var(--card-border-radius, 6px);
+            transition: background-color 0.2s ease-in-out;
+        }
+        .rule-conditions-pane.edit-trigger:hover {
+            background-color: var(--button-hover-bg-color, rgba(255, 255, 255, 0.08));
+        }
     </style>
-    <!-- END fix -->
 
     {% if current_settings.get('background_image') and current_settings.get('background_image') != 'default' %}
     <style>

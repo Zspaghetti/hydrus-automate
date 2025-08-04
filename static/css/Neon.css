@@ -86,6 +86,7 @@ body {
     color: var(--text-light);
     min-height: 100vh;
     overflow-y: auto;
+	overflow-x: hidden;
     position: relative;
 }
 
@@ -224,6 +225,7 @@ input:checked + .slider:before { transform: translateX(26px); }
     box-shadow: 0 0 25px rgba(0, 246, 255, 0.3), 0 0 50px rgba(0, 0, 0, 0.5);
     width: 100%; max-width: 720px; max-height: 90vh;
     overflow-y: auto; position: relative;
+	overflow-x: hidden;
     transform: scale(0.95); transition: transform 0.3s ease;
 }
 .modal-overlay[style*="display: flex"] .modal-content { transform: scale(1); }

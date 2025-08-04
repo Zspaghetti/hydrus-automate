@@ -47,6 +47,7 @@ body {
     color: var(--text-dark);
     min-height: 100vh;
     overflow-y: auto;
+    overflow-x: hidden;
     position: relative;
 }
 /* This applies the special layout ONLY to the body when it contains the main app. */
@@ -368,6 +369,7 @@ body::before {
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
     width: 100%; max-width: 720px; max-height: 90vh;
     overflow-y: auto; position: relative;
+	overflow-x: hidden;
     transform: scale(0.95) translateY(10px); transition: transform 0.3s ease;
 }
 .modal-overlay[style*="display: flex"] .modal-content { transform: scale(1) translateY(0); }

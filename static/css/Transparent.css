@@ -419,6 +419,7 @@ button:disabled {
     box-shadow: 0 8px 32px 0 var(--shadow-color);
     color: var(--text-color);
     width: 90%;
+	overflow-x: hidden;
     max-width: 800px; /* Wider for complex rule editing */
 }
 
