@@ -1,0 +1,9 @@
+# Ignore Python virtual environment directory
+/venv/
+
+# Ignore local database directory
+/db/
+
+# Ignore specific configuration files in the root directory
+rules.json
+settings.json

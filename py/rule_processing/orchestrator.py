@@ -141,7 +141,7 @@ def estimate_rule_impact(app_config, rule, is_deep_run=False, is_bypass_override
             db_conn.close()
 
 
-def execute_single_rule(app_config, db_conn, rule, current_run_id, execution_order_in_run, is_manual_run: bool, override_bypass_list: Optional[List[str]] = None, deep_run_list: Optional[List[str]] = None):
+def execute_single_rule(app_config, db_conn, rule, current_run_id, execution_order_in_run, is_manual_run: bool = True, override_bypass_list: Optional[List[str]] = None, deep_run_list: Optional[List[str]] = None):
     """
     Main function to execute a single rule's logic from start to finish.
     """
@@ -161,9 +161,9 @@ def execute_single_rule(app_config, db_conn, rule, current_run_id, execution_ord
         logger.critical(f"Failed to create RuleExecutionContext: {e}")
         return {"success": False, "message": str(e)}
 
-    manual_run_log_str = "(Manual Run)"
+    manual_run_log_str = " (Manual Run)" if is_manual_run else ""
     log_prefix = f"RuleExec ID {ctx.rule_execution_id[:8]} (Rule '{ctx.rule_name}', RunID {ctx.run_id[:8]})"
-    logger.info(f"{log_prefix}: Executing (Importance: {ctx.rule_importance}, Type: {ctx.action_type}) {manual_run_log_str}")
+    logger.info(f"{log_prefix}: Executing (Importance: {ctx.rule_importance}, Type: {ctx.action_type}){manual_run_log_str}")
 
     # Initialize tracking variables and final details object
     final_details = utils.create_default_details()
@@ -177,6 +177,8 @@ def execute_single_rule(app_config, db_conn, rule, current_run_id, execution_ord
     try:
         # --- 1. PREPARATION AND LOGGING ---
         start_run_log(db_conn, ctx.rule_execution_id, ctx.run_id, ctx.rule, execution_order_in_run)
+        # --- FIX: Commit the initial log entry immediately to release the database lock ---
+        db_conn.commit()
         
         # Ensure services are loaded and attach to context for other modules to use
         ctx.available_services = actions.ensure_services_are_loaded(ctx)
@@ -343,7 +345,6 @@ def execute_single_rule(app_config, db_conn, rule, current_run_id, execution_ord
         logger.info(f"{log_prefix}: {final_summary_message_str}")
 
     except Exception as main_exc:
-        db_conn.rollback()
         overall_rule_success_flag = False
         final_summary_message_str = str(main_exc)
         logger.error(f"{log_prefix}: CRITICAL EXCEPTION: {final_summary_message_str}", exc_info=True)

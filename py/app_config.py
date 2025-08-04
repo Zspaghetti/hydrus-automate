@@ -43,12 +43,12 @@ def _discover_themes():
     themes_dir = os.path.join(BASE_DIR, 'static', 'css')
     if os.path.exists(themes_dir) and os.path.isdir(themes_dir):
         for filename in os.listdir(themes_dir):
-            if filename.endswith('.css'):
+            if filename.endswith('.css') and filename != 'local-fonts.css':
                 theme_name = filename[:-4]
                 available_themes_discovered.append(theme_name)
         if not available_themes_discovered:
             available_themes_discovered.append('modern_Default') # Fallback if no CSS found
-            logger.warning(f"No CSS files found in {themes_dir}. Defaulting to 'available_themes': ['modern_Default'].")
+            logger.warning(f"No CSS theme files found in {themes_dir}. Defaulting to 'available_themes': ['modern_Default'].")
     else:
         logger.warning(f"Themes directory {themes_dir} not found. Defaulting to 'available_themes': ['modern_Default'].")
         available_themes_discovered.append('modern_Default')

@@ -152,7 +152,7 @@ function renderRuleCard(rule, context) {
                 <button class="run-btn-collapsed run-button" title="Run Rule" data-rule-id="${rule.id}" data-rule-name="${ruleNameForNotif.replace(/"/g, '"')}"><i class="${actionDetails.icon}"></i></button>
             </div>
             <div class="rule-card-body">
-                <div class="rule-conditions-pane">
+                <div class="rule-conditions-pane edit-trigger" title="Click to edit rule">
                     <div class="pane-title">Conditions</div>
                     <ul class="conditions-list">
                         ${conditionsHtml}
@@ -200,9 +200,9 @@ function postRenderSetup(container) {
         if (card.dataset.listenerAttached) return;
 
         card.addEventListener('click', (event) => {
-            // Only toggle the card if the click is not on a button.
-            if (event.target.closest('button')) {
-                return; // A button was clicked, let its own listener handle it.
+            // Only toggle the card if the click is not on a button or the clickable conditions pane.
+            if (event.target.closest('button') || event.target.closest('.rule-conditions-pane.edit-trigger')) {
+                return;
             }
             card.classList.toggle('expanded');
         });
@@ -279,6 +279,17 @@ export function renderRulesTable(rules, context = {}) {
                     }
                     window.location.reload();
                 }
+            }
+            return; // Action handled
+        }
+
+        // Handle clicking the conditions pane to edit the rule.
+        const conditionsPane = event.target.closest('.rule-conditions-pane.edit-trigger');
+        if (conditionsPane) {
+            const ruleCard = conditionsPane.closest('.rule-card[data-rule-id]');
+            if (ruleCard) {
+                const ruleId = ruleCard.dataset.ruleId;
+                editRule(ruleId);
             }
             return; // Action handled
         }

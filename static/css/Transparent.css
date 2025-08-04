@@ -96,6 +96,9 @@ html, body {
     flex-grow: 1;
     overflow-y: auto;
     padding-right: 5px; /* space for scrollbar */
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
 }
 
 /* Main Content Area (index.html) */
@@ -163,6 +166,7 @@ html, body {
 .set-card {
     padding: 1rem;
     cursor: pointer;
+	flex-shrink: 0;
 }
 
 .set-card.active {
@@ -419,6 +423,7 @@ button:disabled {
     box-shadow: 0 8px 32px 0 var(--shadow-color);
     color: var(--text-color);
     width: 90%;
+	overflow-x: hidden;
     max-width: 800px; /* Wider for complex rule editing */
 }
 

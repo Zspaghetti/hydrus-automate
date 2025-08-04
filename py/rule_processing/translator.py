@@ -288,10 +288,8 @@ def translate_rule_to_hydrus_predicates(
                     'has_transparency': 'system:has transparency',
                 }
                 negative_forms = {
-                    'inbox': '-system:inbox', 'archive': '-system:archive',
                     'local': 'system:file service is not currently in all local files',
                     'trashed': 'system:file service is not currently in trash',
-                    'deleted': '-system:is deleted',
                     'has_duration': 'system:no duration',
                     'is_the_best_quality_file_of_its_duplicate_group': 'system:is not the best quality file of its duplicate group',
                     'has_audio': 'system:no audio', 'has_exif': 'system:no exif',
@@ -299,7 +297,7 @@ def translate_rule_to_hydrus_predicates(
                     'has_icc_profile': 'system:no icc profile',
                     'has_tags': 'system:no tags', # Hydrus synonym for 'system:untagged'
                     'has_notes': 'system:does not have notes', # Hydrus synonym for 'system:no notes'
-                    'has_transparency': '-system:has transparency',
+                    'has_transparency': 'system:no transparency',
                 }
                 if value is True:
                     if operator in positive_forms: predicate_string = positive_forms[operator]
@@ -312,24 +310,22 @@ def translate_rule_to_hydrus_predicates(
                             level = 'critical' if is_critical_warning(message) else 'info'
                             warnings_list_ref.append({'level': level, 'message': message})
                         if operator == 'has_notes':
-                             message = "Note: 'has_notes is false' mapped to 'system:does not have notes'. 'system:no notes' is an equivalent option."
+                             message = "Note: 'has_notes is false' mapped to 'system:no notes'."
                              level = 'critical' if is_critical_warning(message) else 'info'
                              warnings_list_ref.append({'level': level, 'message': message})
-                    elif operator in positive_forms:
-                        predicate_string = f"-{positive_forms[operator]}"
-                        message = f"Note: Boolean operator '{operator}' (for FALSE) negated generically as '{predicate_string}'."
-                        level = 'critical' if is_critical_warning(message) else 'info'
-                        warnings_list_ref.append({'level': level, 'message': message})
-                    else: warning_msg = f"Warning: Boolean operator '{operator}' (for FALSE) has no mapping. Skipping."
+                    else:
+                        warning_msg = (f"CRITICAL Warning: The condition '{operator}: false' cannot be translated into a valid Hydrus "
+                                       f"system predicate. The Hydrus API does not support negating this term. "
+                                       f"Skipping this condition.")
 
             elif condition_type == 'filetype' and operator in ['is', 'is_not'] and isinstance(value, list) and value:
                  processed_values = [str(v).strip().lower() for v in value]
                  values_string = ", ".join(processed_values)
                  if operator == 'is': predicate_string = f"system:filetype = {values_string}"
                  elif operator == 'is_not':
-                     predicate_string = f"system:filetype is not {values_string}"
+                     predicate_string = f"system:filetype != {values_string}"
                      if len(processed_values) > 1:
-                         message = f"Note: 'filetype is not {values_string}'. Check Hydrus behavior for multiple types with 'is not'."
+                         message = f"Note: The 'filetype is not' operator in Hydrus works as a logical AND (e.g., not jpg AND not png)."
                          level = 'critical' if is_critical_warning(message) else 'info'
                          warnings_list_ref.append({'level': level, 'message': message})
                  else: warning_msg = f"Warning: Unexpected operator '{operator}' for filetype. Skipping."
@@ -523,25 +519,46 @@ def translate_rule_to_hydrus_predicates(
 
         elif action_type == 'force_in':
             if force_in_special_check:
-                all_local_services = [s for s in available_services_list if isinstance(s, dict) and s.get('type') == 2]
-                all_local_service_preds = []
-                for service in all_local_services:
-                    if service.get('name'):
-                        all_local_service_preds.append(f"system:file service currently in {service['name']}")
-                    else:
-                        message = f"Warning: (ForceIn Special Check) Local service with key '{service.get('service_key')}' is missing a name and was skipped."
+                # This is the corrected logic for a "deep run" to find all files that need placement correction.
+                # The goal is to find any file that exists in a local service OTHER THAN the specified destinations.
+                
+                # 1. Get the rule's destination keys to know what to exclude from the search.
+                raw_dest_keys = rule_action_obj.get('destination_service_keys', [])
+                rule_dest_keys_set = set(k for k in raw_dest_keys if k) if isinstance(raw_dest_keys, list) else set()
+                if not rule_dest_keys_set:
+                    message = ("CRITICAL Warning: (ForceIn Deep Run) was triggered, but the rule has no destination keys defined. "
+                               "This is an unsafe configuration that would target all files. Aborting rule translation.")
+                    translation_warnings.append({'level': 'critical', 'message': message})
+                    # By leaving string_predicates empty, the final check will catch this and abort the rule.
+                
+                else:
+                    # 2. Get all local file services.
+                    all_local_services = [s for s in available_services_list if isinstance(s, dict) and s.get('type') == 2]
+                    
+                    # 3. Build a predicate list of services that are NOT the destination.
+                    other_local_service_preds = []
+                    for service in all_local_services:
+                        service_key = service.get('service_key')
+                        service_name = service.get('name')
+                        if service_key and service_name and service_key not in rule_dest_keys_set:
+                            other_local_service_preds.append(f"system:file service currently in {service['name']}")
+                        elif not service_name:
+                            message = f"Warning: (ForceIn Deep Run) Local service with key '{service_key}' is missing a name and was skipped from the search."
+                            level = 'critical' if is_critical_warning(message) else 'info'
+                            translation_warnings.append({'level': level, 'message': message})
+
+                    # 4. Add the OR group to the main predicates. This will be split by prepare_sequential_searches.
+                    if other_local_service_preds:
+                        string_predicates.append(other_local_service_preds)
+                        message = (f"Note: For 'force_in' (deep run mode), created a large OR group for {len(other_local_service_preds)} "
+                                   f"local file services that are NOT the rule's destination. This search will be split for performance.")
                         level = 'critical' if is_critical_warning(message) else 'info'
                         translation_warnings.append({'level': level, 'message': message})
-
-                if all_local_service_preds:
-                    string_predicates.append(all_local_service_preds)
-                    message = f"Note: For 'force_in' (special check mode), created a large OR group for all {len(all_local_service_preds)} local file services. This search will be split into multiple smaller API calls."
-                    level = 'critical' if is_critical_warning(message) else 'info'
-                    translation_warnings.append({'level': level, 'message': message})
-                else:
-                    message = "Warning: (ForceIn Special Check) Could not find any named local file services to build the search predicate."
-                    level = 'critical' if is_critical_warning(message) else 'info'
-                    translation_warnings.append({'level': level, 'message': message})
+                    else:
+                        message = ("Note: (ForceIn Deep Run) Could not find any other named local file services to build the search predicate. "
+                                   "This may be correct if all local services are configured as destinations for this rule.")
+                        level = 'critical' if is_critical_warning(message) else 'info'
+                        translation_warnings.append({'level': level, 'message': message})
             else:
                 rule_dest_keys = []
                 raw_dest_keys = rule_action_obj.get('destination_service_keys', [])

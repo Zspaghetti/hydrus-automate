@@ -42,6 +42,7 @@ body {
     color: var(--text-light);
     min-height: 100vh;
     overflow-y: auto;
+    overflow-x: hidden;
     position: relative;
 }
 
@@ -179,6 +180,7 @@ input:checked + .slider:before { transform: translateX(26px); }
     box-shadow: 0 0 25px rgba(0, 246, 255, 0.3), 0 0 50px rgba(0, 0, 0, 0.5);
     width: 100%; max-width: 720px; max-height: 90vh;
     overflow-y: auto; position: relative;
+	overflow-x: hidden;
     transform: scale(0.95); transition: transform 0.3s ease;
 }
 .modal-overlay[style*="display: flex"] .modal-content { transform: scale(1); }
@@ -247,6 +249,7 @@ input:checked + .slider:before { transform: translateX(26px); }
 .set-card {
     background: rgba(16, 18, 35, 0.7); border-radius: var(--border-radius); padding: 16px; position: relative;
     transition: var(--transition); cursor: pointer; border: 1px solid transparent; backdrop-filter: blur(5px);
+	flex-shrink: 0;
 }
 .set-card:hover { border-color: var(--accent-cyan); transform: translateY(-3px) scale(1.02); box-shadow: 0 0 15px rgba(0, 246, 255, 0.3); }
 .set-card.active {
@@ -369,6 +372,16 @@ input:checked + .slider:before { transform: translateX(26px); }
 .set-card, .rule-card { animation: fadeIn 0.5s ease forwards; }
 
 /* --- [SECTION 4] MODAL-SPECIFIC STYLES --- */
+
+/* Add rule for the summary modal message */
+#run-summary-message {
+    white-space: pre-line; /* This is the key change! */
+    line-height: 1.6;      /* A little extra line height for better readability */
+    background-color: rgba(0, 0, 0, 0.2); /* A subtle background to frame the text */
+    padding: 15px;
+    border-radius: 8px;
+    color: var(--text-light);
+}
 
 /* Condition rows in the Rule modal */
 #conditions-container .condition-row {

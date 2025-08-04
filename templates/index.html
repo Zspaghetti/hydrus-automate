@@ -9,10 +9,10 @@
     <title>{{ current_settings.get('butler_name', 'Hydrus Automate') }} | Rules</title>
     
     <!-- Font Awesome for Icons -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='/static/fonts/fontawesome/css/all.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='fonts/fontawesome/css/all.min.css') }}">
     
     <!-- Google Fonts for a modern look -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='/static/css/local-fonts.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/local-fonts.css') }}">
     
     <!-- Link to the application's stylesheet. The theme is selected on the settings page. -->
     <link id="main-stylesheet" rel="stylesheet" href="{{ url_for('static', filename='css/' + current_settings.get('theme', 'default') + '.css') }}">
@@ -44,8 +44,16 @@
         .run-btn-collapsed {
             flex-shrink: 0; /* Ensures the button never gets squashed */
         }
+
+        .rule-conditions-pane.edit-trigger {
+            cursor: pointer;
+            border-radius: var(--card-border-radius, 6px);
+            transition: background-color 0.2s ease-in-out;
+        }
+        .rule-conditions-pane.edit-trigger:hover {
+            background-color: var(--button-hover-bg-color, rgba(255, 255, 255, 0.08));
+        }
     </style>
-    <!-- END fix -->
 
     {% if current_settings.get('background_image') and current_settings.get('background_image') != 'default' %}
     <style>

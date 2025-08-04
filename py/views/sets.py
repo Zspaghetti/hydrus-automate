@@ -126,6 +126,7 @@ def run_set_route(set_id):
             exec_result = execute_single_rule(
                 app_config=current_app.config, db_conn=db_conn, rule=rule,
                 current_run_id=parent_run_id, execution_order_in_run=i + 1,
+                is_manual_run=True,
                 override_bypass_list=override_bypass_list, deep_run_list=deep_run_list
             )
             results_per_rule.append(exec_result)
@@ -141,4 +142,5 @@ def run_set_route(set_id):
         return jsonify({"success": False, "message": str(e)}), 500
     finally:
         if db_conn: db_conn.close()
+
         current_app.logger.info(f"--- Manual Set Trigger Finished: Run ID {parent_run_id[:8]} ---")
